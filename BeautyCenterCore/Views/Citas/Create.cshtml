@@ -5,7 +5,29 @@
 }
 
 <h2>Create</h2>
+<style>
+    #content {
+        position:  center;
+        min-height: 50%;
+        width: 80%;
+        top: 20%;
+        left: 5%;
+    }
 
+    .selected {
+        cursor: pointer;
+    }
+
+        .selected:hover {
+            background-color: #0585C0;
+            color: white;
+        }
+
+    .seleccionada {
+        background-color: #0585C0;
+        color: white;
+    }
+</style>
 
 @using (Html.BeginForm())
 {
@@ -20,14 +42,18 @@
         <div class="form-group">
             <div class="input-group">
                 <span class="input-group-addon">Cliente</span>
-                <select class="form-control selected" id="ClienteList"></select>
+                <select class="form-control selected" id="ClienteList">
+                    <option value="" disabled selected>Clientes</option>
+                </select>
             </div>
         </div>
 
         <div class="form-group">
             <div class="input-group">
                 <span class="input-group-addon">Empleado</span>
-                <select class="form-control selected" id="EmpleadoList"></select>
+                <select class="form-control selected" id="EmpleadoList">
+                    <option value="" disabled selected>Empleados</option>
+                </select>
             </div>
         </div>
         <div asp-validation-summary="All" class="text-danger"></div>
@@ -41,49 +67,116 @@
         <div class="form-group">
             <div class="input-group">
                 <span class="input-group-addon">Servicios</span>
-                <select class="form-control selected" id="ServicioList"></select>
-                <button type="button" class="btn btn-default" id="btnAgregar" onclick="AgregarDetalle()">Agregar</button>
+                <select class="form-control selected" id="ServicioList">
+                    <option value="0" disabled selected>Servicios</option>
+                </select>
+                <button type ="button" id="bt_add" class="btn btn-default">Agregar</button>
+                <button type="button" id="bt_del" class="btn btn-default">Eliminar</button>
+                <button type ="button"id="bt_delall" class="btn btn-default">Eliminar todo</button>
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover table-sm table-bordered" id="tDetalle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>ServicioId</th>
-                        <th>Servicios</th>
-                    </tr>
-                </thead>
-                <tbody id="tbBody"></tbody>
-            </table>
-        </div>
+        <div id="content">
+		<table id="tabla" class="table table-bordered">
+		<thead>
+			<tr>
+				<td>#</td>
+				<td>ServicioId</td>
+				<td>Servicio</td>
+			</tr>
+		</thead>
+            <tbody id="tbBody"></tbody>
+	</table>
+	</div>
 
         <div class="form-group text-center col-xl-12">
             <div class="col-md-offset-2 col-md-10">
                 <button type="button" class="btn btn-success col-sm-2" id="btnCrear" onclick="CrearCita()">Crear</button>
-
             </div>
         </div>
     </div>
-    
+
 }
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="js/jquery-2.1.1.min.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.css">
         <script type="text/javascript" src="~/js/moment.min.js"></script>
+        <script src="~/js/bootstrap.js"></script>
         <script type="text/javascript" src="~/js/moment-with-locales.min.js"></script>
         <script type="text/javascript" src="~/js/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
-        <script type="text/javascript" src="~/js/bootstrap.js"></script>
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
         <script type="text/javascript">
+            $(document).ready(function () {
+                $('#bt_add').click(function () {
+                    agregar();
+                });
+                $('#bt_del').click(function () {
+                    eliminar(id_fila_selected);
+                });
+                $('#bt_delall').click(function () {
+                    eliminarTodasFilas();
+                });
+
+
+            });
+            var cont = 0;
+            var id_fila_selected = [];
+            function agregar() {
+                cont++;
+                var long = $("#tbBody tr").length;
+                var atributos = $('#ServicioList').find('option:selected');
+                var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
+                
+                var fila = '<tr class="selected" id="fila' + cont + '" onclick="seleccionar(this.id);"><td>' +
+                    cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>" + "</tr>";
+                
+                $('#tabla').append(fila);
+                reordenar();
+            }
+
+            function seleccionar(id_fila) {
+                if ($('#' + id_fila).hasClass('seleccionada')) {
+                    $('#' + id_fila).removeClass('seleccionada');
+                }
+                else {
+                    $('#' + id_fila).addClass('seleccionada');
+                }
+                //2702id_fila_selected=id_fila;
+                id_fila_selected.push(id_fila);
+            }
+
+            function eliminar(id_fila) {
+                /*$('#'+id_fila).remove();
+                reordenar();*/
+                for (var i = 0; i < id_fila.length; i++) {
+                    $('#' + id_fila[i]).remove();
+                }
+                reordenar();
+            }
+
+            function reordenar() {
+                var num = 1;
+                $('#tabla tbody tr').each(function () {
+                    $(this).find('td').eq(0).text(num);
+                    num++;
+                });
+            }
+            function eliminarTodasFilas() {
+                $('#tabla tbody tr').each(function () {
+                    $(this).remove();
+                });
+
+            }
+
+            ///////////////////////////////////////////////////////////////////////////
             var cId = 0; var eId = 0; var sId = 0;
             $(document).ready(function () {
                 CargarClientes();
@@ -95,7 +188,12 @@
                 format: 'dd/mm/yyyy',
                 autoclose: true
             });
-
+            $("#Borrar").click(function () {
+                var trs = $("#tDetalle tr").length;
+                if (trs > 1) {
+                    $("#tDetalle tr:last").remove();
+                }
+            });
             function CrearDetalle(ciId) {
                 $('#tbBody tr').each(function () {
                     var Contenido = new Array();
@@ -125,7 +223,7 @@
                 fila += "<td>" + atributos.text() + "</td>";
                 fila += "</tr>";
 
-                $('#tDetalle tbody').append(fila);
+                $('#tabla tbody').append(fila);
             }
             function SentDetails(detail) {
                 var pack = JSON.stringify(detail);
@@ -154,7 +252,7 @@
                         method: "POST",
                         url: "/Cargador/GuardarCitas",
                         data: personas,
-                        
+
                         success: function (id) {
                             if (parseInt(id) > 0) {
                                 CrearDetalle(id);
@@ -174,7 +272,7 @@
 
                 var EmpleadoList = $('#EmpleadoList').find('option:selected');
                 var EmpleadoListId = $('#EmpleadoList').find('option:selected').attr('id'); eId = EmpleadoListId;
-                
+
                 var p = "09/09/09";
                 var dstr = $('#dpFecha').val();
 

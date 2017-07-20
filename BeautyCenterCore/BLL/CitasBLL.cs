@@ -29,7 +29,7 @@ namespace BeautyCenterCore.BLL
             }
             return false;
         }
-        public static Citas Buscar(int? nuevoId)
+        public static Citas Buscarr(int? nuevoId)
         {
             Citas cliente = null;
             using (var conexion = new BeautyCoreDb())
@@ -99,18 +99,34 @@ namespace BeautyCenterCore.BLL
             }
             return listado;
         }
-
-        public static bool Eliminar(int? nuevoId)
+        public static Clases Buscar(int? facturaId)
         {
-            try
+            Clases nuevo = null;
+            using (var conexion = new BeautyCoreDb())
             {
-                return Eliminar(Buscar(nuevoId));
-            }
-            catch (Exception)
-            {
+                try
+                {
+                    nuevo = new Clases()
+                    {
+                        variable = conexion.Citas.Find(facturaId)
+                    };
+                    if (nuevo.variable != null)
+                    {
+                        nuevo.Detalle =
+                        BLL.DetalleCitasBLL.Listar(nuevo.variable.CitaId);
+                    }
+                    else
+                    {
+                        nuevo = null;
+                    }
+                }
+                catch (Exception)
+                {
 
-                throw;
+                    throw;
+                }
             }
+            return nuevo;
         }
     }
 }

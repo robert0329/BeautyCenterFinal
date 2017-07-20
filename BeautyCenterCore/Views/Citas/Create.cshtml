@@ -1,77 +1,251 @@
 @model BeautyCenterCore.Models.Citas
 
 @{
-    ViewData["Title"] = "Create";
+    ViewBag.Title = "Create";
 }
 
 <h2>Create</h2>
 
-<form asp-action="Create">
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
     <div class="form-horizontal">
+
         <h4>Citas</h4>
         <hr />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
         <div class="form-group">
-            <label asp-for="ClienteId" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ClienteId" class="form-control" />
-                <span asp-validation-for="ClienteId" class="text-danger"></span>
+            <div class="input-group">
+                <span class="input-group-addon">Cliente</span>
+                <select class="form-control selected" id="ClienteList"></select>
             </div>
         </div>
+
         <div class="form-group">
-            <label asp-for="Nombres" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Nombres" class="form-control" />
-                <span asp-validation-for="Nombres" class="text-danger"></span>
+            <div class="input-group">
+                <span class="input-group-addon">Empleado</span>
+                <select class="form-control selected" id="EmpleadoList"></select>
             </div>
         </div>
+        <div asp-validation-summary="All" class="text-danger"></div>
         <div class="form-group">
-            <label asp-for="ServicioId" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ServicioId" class="form-control" />
-                <span asp-validation-for="ServicioId" class="text-danger"></span>
+            <div class="input-group">
+                <span class="input-group-addon glyphicon glyphicon-calendar"> Fecha:</span>
+                <input class="form-control input-group input" type="text" placeholder="Fecha" id="dpFecha" required readonly />
             </div>
         </div>
+
         <div class="form-group">
-            <label asp-for="Servicio" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Servicio" class="form-control" />
-                <span asp-validation-for="Servicio" class="text-danger"></span>
+            <div class="input-group">
+                <span class="input-group-addon">Servicios</span>
+                <select class="form-control selected" id="ServicioList"></select>
+                <button type="button" class="btn btn-default" id="btnAgregar" onclick="AgregarDetalle()">Agregar</button>
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="EmpleadoId" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="EmpleadoId" class="form-control" />
-                <span asp-validation-for="EmpleadoId" class="text-danger"></span>
-            </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-sm table-bordered" id="tDetalle">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ServicioId</th>
+                        <th>Servicios</th>
+                    </tr>
+                </thead>
+                <tbody id="tbBody"></tbody>
+            </table>
         </div>
-        <div class="form-group">
-            <label asp-for="NombreE" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="NombreE" class="form-control" />
-                <span asp-validation-for="NombreE" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Fecha" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Fecha" class="form-control" />
-                <span asp-validation-for="Fecha" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
+
+        <div class="form-group text-center col-xl-12">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <button type="button" class="btn btn-success col-sm-2" id="btnCrear" onclick="CrearCita()">Crear</button>
+
             </div>
         </div>
     </div>
-</form>
-
+    
+}
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script type="text/javascript" src="~/js/moment.min.js"></script>
+        <script type="text/javascript" src="~/js/moment-with-locales.min.js"></script>
+        <script type="text/javascript" src="~/js/bootstrap-datepicker.js"></script>
+        <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
+        <script type="text/javascript" src="~/js/bootstrap.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+        <script type="text/javascript">
+            var cId = 0; var eId = 0; var sId = 0;
+            $(document).ready(function () {
+                CargarClientes();
+                CargarEmpleados();
+                CargaServicios();
+            });
+            $(document).off('.datepicker.data-api');
+            $('#dpFecha').datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true
+            });
+
+            function CrearDetalle(ciId) {
+                $('#tbBody tr').each(function () {
+                    var Contenido = new Array();
+                    var CitaId = ciId;
+                    var Ser = $(this).find('td').eq(1).html();
+                    Contenido.push(
+                        {
+                            Id: 0,
+                            CitaId: CitaId,
+                            ClienteId: cId,
+                            ServicioId: Ser,
+                            EmpleadoId: eId
+                        });
+                    console.log(Contenido);
+                    SentDetails(Contenido);
+                });
+            }
+            function AgregarDetalle() {
+
+                var long = $("#tbBody tr").length;
+                var atributos = $('#ServicioList').find('option:selected');
+                var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
+
+                var fila = "<tr>";
+                fila += "<td>" + (long + 1) + "</td>";
+                fila += "<td>" + ServicioListId + "</td>";
+                fila += "<td>" + atributos.text() + "</td>";
+                fila += "</tr>";
+
+                $('#tDetalle tbody').append(fila);
+            }
+            function SentDetails(detail) {
+                var pack = JSON.stringify(detail);
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/Cargador/GuardarDetalleCitas",
+                        data: pack,
+                        contentType: "application/json",
+                        success: function (data) {
+                            if (!data) {
+                                alert("No se guardo el detalle");
+                            }
+                            else {
+                                alert("Se Guardo");
+                                Limpiar();
+                            }
+                        }
+                    });
+            }
+
+            function EnviarCita(personas) {
+                var pack = JSON.stringify(personas);
+                $.ajax(
+                    {
+                        method: "POST",
+                        url: "/Cargador/GuardarCitas",
+                        data: personas,
+                        
+                        success: function (id) {
+                            if (parseInt(id) > 0) {
+                                CrearDetalle(id);
+                            }
+                            else {
+                                alert("No se Guardo!!!!!");
+                            }
+                        }
+                    });
+            };
+            function CrearCita() {
+                var ClienteList = $('#ClienteList').find('option:selected');
+                var ClienteListId = $('#ClienteList').find('option:selected').attr('id'); cId = ClienteListId;
+
+                var ServicioList = $('#ServicioList').find('option:selected');
+                var ServicioListId = $('#ServicioList').find('option:selected').attr('id'); sId = ServicioListId;
+
+                var EmpleadoList = $('#EmpleadoList').find('option:selected');
+                var EmpleadoListId = $('#EmpleadoList').find('option:selected').attr('id'); eId = EmpleadoListId;
+                
+                var p = "09/09/09";
+                var dstr = $('#dpFecha').val();
+
+                var Citas = {
+                    CitaId: 0,
+
+                    ClienteId: ClienteListId,
+                    Nombres: ClienteList.text(),
+
+                    ServicioId: ServicioListId,
+                    Servicio: ServicioList.text(),
+
+                    EmpleadoId: EmpleadoListId,
+                    NombreE: EmpleadoList.text(),
+
+                    Fecha: dstr
+                }
+                console.log(Citas);
+                EnviarCita(Citas);
+            }
+
+            function Limpiar() {
+                $('#inpId').val("");
+                $('#tbCantPersonas').val("");
+                $('#dpFecha').val("");
+                $('#tbBody tr').remove();
+            }
+
+            function CargaServicios() {
+                $.getJSON("/Cargador/ListaServiciosCitas",
+                    {
+                        id: 1
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.servicioId;
+                            var Precio = lista.precio;
+                            var Nombre = lista.nombre;
+                            var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
+                            $('#ServicioList').append(option);
+                        });
+                    });
+            }
+            function CargarClientes() {
+                $.getJSON("/Cargador/ListaClientesCitas",
+                    {
+                        id: 1
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.clienteId;
+                            var Nombre = lista.nombres;
+                            var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
+                            $('#ClienteList').append(option);
+                        });
+                    });
+            }
+            function CargarEmpleados() {
+                $.getJSON("/Cargador/ListaEmpleadosCitas",
+                    {
+                        id: 1
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.empleadoId;
+                            var Nombre = lista.nombres;
+                            var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
+                            $('#EmpleadoList').append(option);
+                        });
+                    });
+            }
+        </script>
+    }
 }

@@ -55,7 +55,7 @@ namespace BeautyCenterCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CitaId,ClienteId,Nombres,ServicioId,Servicio,EmpleadoId,NombreE,Fecha")] Citas citas)
+        public IActionResult Create([Bind("CitaId,ClienteId,Nombres,ServicioId,Servicio,EmpleadoId,NombreE,Fecha")] Citas citas)
         {
             if (ModelState.IsValid)
             {
@@ -138,7 +138,7 @@ namespace BeautyCenterCore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var citas = BLL.CitasBLL.Buscar(id);
+            var citas = BLL.CitasBLL.Buscarr(id);
             BLL.CitasBLL.Eliminar(citas);
             return RedirectToAction("Index");
         }

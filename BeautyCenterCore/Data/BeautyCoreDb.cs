@@ -27,5 +27,7 @@ namespace BeautyCenterCore.Models
         public DbSet<BeautyCenterCore.Models.Servicios> Servicios { get; set; }
 
         public DbSet<BeautyCenterCore.Models.Usuarios> Usuarios { get; set; }
+
+        public DbSet<BeautyCenterCore.Models.CitasDetalles> CitasDetalles { get; set; }
     }
 }

@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using BeautyCenterCore.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 namespace BeautyCenterCore
 {
@@ -29,11 +31,27 @@ namespace BeautyCenterCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-            services.AddMvc();
-
             services.AddDbContext<BeautyCoreDb>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("BeautyCoreDb")));
+                options.UseSqlServer(Configuration.GetConnectionString("BeautyCoreDb")));
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CookiePolicy", policy =>
+                {
+                    policy.AddAuthenticationSchemes("CookiePolicy", "CookiePolicy");
+                    policy.RequireAuthenticatedUser();
+                });
+
+            });
+
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(25);
+                options.CookieName = "CookiePolicy";
+            });
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,13 +70,23 @@ namespace BeautyCenterCore
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseCookieAuthentication(new CookieAuthenticationOptions()
+            {
+                AuthenticationScheme = "CookiePolicy",
+                LoginPath = new PathString("/Home/Login/"),
+                AccessDeniedPath = new PathString("/Home/AccessDenied"),
+                AutomaticAuthenticate = false,
+                AutomaticChallenge = false
+            });
+
             app.UseStaticFiles();
+            app.UseSession();
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Login}/{id?}");
             });
         }
     }

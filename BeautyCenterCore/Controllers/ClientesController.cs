@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeautyCenterCore.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BeautyCenterCore.Controllers
 {
+    [Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
     public class ClientesController : Controller
     {
         private readonly BeautyCoreDb _context;
@@ -19,9 +21,9 @@ namespace BeautyCenterCore.Controllers
         }
 
         // GET: Clientes
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Clientes.ToListAsync());
+            return View(BLL.ClientesBLL.Listar());
         }
 
         // GET: Clientes/Details/5
@@ -53,12 +55,11 @@ namespace BeautyCenterCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClienteId,Nombres,Provincia,Ciudad,Direccion,Cedula,Telefono,FechaNac")] Clientes clientes)
+        public IActionResult Create([Bind("ClienteId,Nombres,Provincia,Ciudad,Direccion,Cedula,Telefono,FechaNac")] Clientes clientes)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(clientes);
-                await _context.SaveChangesAsync();
+                BLL.ClientesBLL.Guardar(clientes);
                 return RedirectToAction("Index");
             }
             return View(clientes);
@@ -72,7 +73,7 @@ namespace BeautyCenterCore.Controllers
                 return NotFound();
             }
 
-            var clientes = await _context.Clientes.SingleOrDefaultAsync(m => m.ClienteId == id);
+            var clientes = BLL.ClientesBLL.Buscar(id);
             if (clientes == null)
             {
                 return NotFound();
@@ -96,7 +97,7 @@ namespace BeautyCenterCore.Controllers
             {
                 try
                 {
-                    _context.Update(clientes);
+                    BLL.ClientesBLL.Modificar(clientes);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -116,15 +117,14 @@ namespace BeautyCenterCore.Controllers
         }
 
         // GET: Clientes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var clientes = await _context.Clientes
-                .SingleOrDefaultAsync(m => m.ClienteId == id);
+            var clientes = BLL.ClientesBLL.Buscar(id);
             if (clientes == null)
             {
                 return NotFound();
@@ -136,11 +136,10 @@ namespace BeautyCenterCore.Controllers
         // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var clientes = await _context.Clientes.SingleOrDefaultAsync(m => m.ClienteId == id);
-            _context.Clientes.Remove(clientes);
-            await _context.SaveChangesAsync();
+            var clientes = BLL.ClientesBLL.Buscar(id);
+            BLL.ClientesBLL.Eliminar(clientes);
             return RedirectToAction("Index");
         }
 

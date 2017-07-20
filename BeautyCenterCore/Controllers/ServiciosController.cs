@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeautyCenterCore.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BeautyCenterCore.Controllers
 {
+    [Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
     public class ServiciosController : Controller
     {
         private readonly BeautyCoreDb _context;

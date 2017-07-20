@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeautyCenterCore.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BeautyCenterCore.Controllers
 {
+    [Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
     public class CitasController : Controller
     {
         private readonly BeautyCoreDb _context;
@@ -19,9 +21,9 @@ namespace BeautyCenterCore.Controllers
         }
 
         // GET: Citas
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Citas.ToListAsync());
+            return View(BLL.CitasBLL.Listar());
         }
 
         // GET: Citas/Details/5
@@ -57,22 +59,21 @@ namespace BeautyCenterCore.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(citas);
-                await _context.SaveChangesAsync();
+                BLL.CitasBLL.Guardar(citas);
                 return RedirectToAction("Index");
             }
             return View(citas);
         }
 
         // GET: Citas/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var citas = await _context.Citas.SingleOrDefaultAsync(m => m.CitaId == id);
+            var citas = BLL.CitasBLL.Buscar(id);
             if (citas == null)
             {
                 return NotFound();
@@ -96,7 +97,7 @@ namespace BeautyCenterCore.Controllers
             {
                 try
                 {
-                    _context.Update(citas);
+                    BLL.CitasBLL.Modificar(citas);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -116,15 +117,14 @@ namespace BeautyCenterCore.Controllers
         }
 
         // GET: Citas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var citas = await _context.Citas
-                .SingleOrDefaultAsync(m => m.CitaId == id);
+            var citas = BLL.CitasBLL.Buscar(id);
             if (citas == null)
             {
                 return NotFound();
@@ -136,11 +136,10 @@ namespace BeautyCenterCore.Controllers
         // POST: Citas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var citas = await _context.Citas.SingleOrDefaultAsync(m => m.CitaId == id);
-            _context.Citas.Remove(citas);
-            await _context.SaveChangesAsync();
+            var citas = BLL.CitasBLL.Buscar(id);
+            BLL.CitasBLL.Eliminar(citas);
             return RedirectToAction("Index");
         }
 

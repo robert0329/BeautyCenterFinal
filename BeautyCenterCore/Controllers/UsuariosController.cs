@@ -11,22 +11,22 @@ using Microsoft.AspNetCore.Authorization;
 namespace BeautyCenterCore.Controllers
 {
     [Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
-    public class EmpleadosController : Controller
+    public class UsuariosController : Controller
     {
         private readonly BeautyCoreDb _context;
 
-        public EmpleadosController(BeautyCoreDb context)
+        public UsuariosController(BeautyCoreDb context)
         {
             _context = context;    
         }
 
-        // GET: Empleados
+        // GET: Usuarios
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Empleados.ToListAsync());
+            return View(await _context.Usuarios.ToListAsync());
         }
 
-        // GET: Empleados/Details/5
+        // GET: Usuarios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,39 +34,39 @@ namespace BeautyCenterCore.Controllers
                 return NotFound();
             }
 
-            var empleados = await _context.Empleados
-                .SingleOrDefaultAsync(m => m.EmpleadoId == id);
-            if (empleados == null)
+            var usuarios = await _context.Usuarios
+                .SingleOrDefaultAsync(m => m.UsuarioId == id);
+            if (usuarios == null)
             {
                 return NotFound();
             }
 
-            return View(empleados);
+            return View(usuarios);
         }
 
-        // GET: Empleados/Create
+        // GET: Usuarios/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Empleados/Create
+        // POST: Usuarios/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmpleadoId,Nombres,Provincia,Ciudad,Direccion,Cedula,Telefono,FechaNac,SueldoFijo")] Empleados empleados)
+        public async Task<IActionResult> Create([Bind("UsuarioId,Nombre,Apellido,Email,NombreUsuario,Contraseña,ConfirmContraseña")] Usuarios usuarios)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(empleados);
+                _context.Add(usuarios);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(empleados);
+            return View(usuarios);
         }
 
-        // GET: Empleados/Edit/5
+        // GET: Usuarios/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +74,22 @@ namespace BeautyCenterCore.Controllers
                 return NotFound();
             }
 
-            var empleados = await _context.Empleados.SingleOrDefaultAsync(m => m.EmpleadoId == id);
-            if (empleados == null)
+            var usuarios = await _context.Usuarios.SingleOrDefaultAsync(m => m.UsuarioId == id);
+            if (usuarios == null)
             {
                 return NotFound();
             }
-            return View(empleados);
+            return View(usuarios);
         }
 
-        // POST: Empleados/Edit/5
+        // POST: Usuarios/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmpleadoId,Nombres,Provincia,Ciudad,Direccion,Cedula,Telefono,FechaNac,SueldoFijo")] Empleados empleados)
+        public async Task<IActionResult> Edit(int id, [Bind("UsuarioId,Nombre,Apellido,Email,NombreUsuario,Contraseña,ConfirmContraseña")] Usuarios usuarios)
         {
-            if (id != empleados.EmpleadoId)
+            if (id != usuarios.UsuarioId)
             {
                 return NotFound();
             }
@@ -98,12 +98,12 @@ namespace BeautyCenterCore.Controllers
             {
                 try
                 {
-                    _context.Update(empleados);
+                    _context.Update(usuarios);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmpleadosExists(empleados.EmpleadoId))
+                    if (!UsuariosExists(usuarios.UsuarioId))
                     {
                         return NotFound();
                     }
@@ -114,10 +114,10 @@ namespace BeautyCenterCore.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(empleados);
+            return View(usuarios);
         }
 
-        // GET: Empleados/Delete/5
+        // GET: Usuarios/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,30 +125,30 @@ namespace BeautyCenterCore.Controllers
                 return NotFound();
             }
 
-            var empleados = await _context.Empleados
-                .SingleOrDefaultAsync(m => m.EmpleadoId == id);
-            if (empleados == null)
+            var usuarios = await _context.Usuarios
+                .SingleOrDefaultAsync(m => m.UsuarioId == id);
+            if (usuarios == null)
             {
                 return NotFound();
             }
 
-            return View(empleados);
+            return View(usuarios);
         }
 
-        // POST: Empleados/Delete/5
+        // POST: Usuarios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var empleados = await _context.Empleados.SingleOrDefaultAsync(m => m.EmpleadoId == id);
-            _context.Empleados.Remove(empleados);
+            var usuarios = await _context.Usuarios.SingleOrDefaultAsync(m => m.UsuarioId == id);
+            _context.Usuarios.Remove(usuarios);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
-        private bool EmpleadosExists(int id)
+        private bool UsuariosExists(int id)
         {
-            return _context.Empleados.Any(e => e.EmpleadoId == id);
+            return _context.Usuarios.Any(e => e.UsuarioId == id);
         }
     }
 }

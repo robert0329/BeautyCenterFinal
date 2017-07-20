@@ -1,4 +1,5 @@
 ﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@using Microsoft.AspNetCore.Http
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,9 +33,42 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+
+                    @if (Context.Session.GetString("UsuarioId") != null)
+                    {
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Registros <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a asp-area="" asp-controller="Servicios" asp-action="Create">Servicios</a></li>
+
+                                <li class="divider"></li>
+                                <li><a asp-area="" asp-controller="Empleados" asp-action="Create">Empleados</a></li>
+                                
+                                <li class="divider"></li>
+                                <li><a asp-area="" asp-controller="Citas" asp-action="Create">Citas</a></li>
+                                
+                                <li class="divider"></li>
+                                <li><a asp-area="" asp-controller="Clientes" asp-action="Create">Clientes</a></li>
+                            </ul>
+                        </li>
+                        
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Configuraciones <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a asp-area="" asp-controller="Home/Register" asp-action="Register">Nuevo Usuario</a></li>
+                                <li><a asp-area="" asp-controller="Home" asp-action="Logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a asp-area="" asp-controller="Home" asp-action="Login">Login</a></li>
+                    }
                 </ul>
             </div>
         </div>

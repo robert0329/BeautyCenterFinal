@@ -7,9 +7,9 @@
 <h2>Create</h2>
 <style>
     #content {
-        position:  center;
-        min-height: 50%;
-        width: 80%;
+        position: center;
+        min-height: 100%;
+        width: 60%;
         top: 20%;
         left: 5%;
     }
@@ -18,10 +18,10 @@
         cursor: pointer;
     }
 
-        .selected:hover {
+        /*.selected:hover {
             background-color: #0585C0;
             color: white;
-        }
+        }*/
 
     .seleccionada {
         background-color: #0585C0;
@@ -43,7 +43,7 @@
             <div class="input-group">
                 <span class="input-group-addon">Cliente</span>
                 <select class="form-control selected" id="ClienteList">
-                    <option value="" disabled selected>Clientes</option>
+                    <option value="0" disabled selected>Clientes</option>
                 </select>
             </div>
         </div>
@@ -70,24 +70,25 @@
                 <select class="form-control selected" id="ServicioList">
                     <option value="0" disabled selected>Servicios</option>
                 </select>
-                <button type ="button" id="bt_add" class="btn btn-default">Agregar</button>
+                <button type="button" id="bt_add" class="btn btn-default">Agregar</button>
                 <button type="button" id="bt_del" class="btn btn-default">Eliminar</button>
-                <button type ="button"id="bt_delall" class="btn btn-default">Eliminar todo</button>
+                @*<button type="button" id="bt_delall" class="btn btn-default">Eliminar todo</button>*@
             </div>
         </div>
-
+        </div>
+        <div>
         <div id="content">
-		<table id="tabla" class="table table-bordered">
-		<thead>
-			<tr>
-				<td>#</td>
-				<td>ServicioId</td>
-				<td>Servicio</td>
-			</tr>
-		</thead>
-            <tbody id="tbBody"></tbody>
-	</table>
-	</div>
+            <table id="tabla" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>#</td>
+                        <td>ServicioId</td>
+                        <td>Servicio</td>
+                    </tr>
+                </thead>
+                <tbody id="tbBody"></tbody>
+            </table>
+        </div>
 
         <div class="form-group text-center col-xl-12">
             <div class="col-md-offset-2 col-md-10">
@@ -95,6 +96,7 @@
             </div>
         </div>
     </div>
+    
 
 }
 <div>
@@ -108,12 +110,20 @@
         <script type="text/javascript" src="~/js/moment.min.js"></script>
         <script src="~/js/bootstrap.js"></script>
         <script type="text/javascript" src="~/js/moment-with-locales.min.js"></script>
-        <script type="text/javascript" src="~/js/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
         <script type="text/javascript">
+
+            var cont = 0;
+            var id_fila_selected = [];
+            var cId = 0; var eId = 0; var sId = 0;
+
+            $(document).off('.datepicker.data-api');
+            $('#dpFecha').datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true
+            });
             $(document).ready(function () {
                 $('#bt_add').click(function () {
                     agregar();
@@ -124,24 +134,30 @@
                 $('#bt_delall').click(function () {
                     eliminarTodasFilas();
                 });
-
-
+                CargarClientes();
+                CargarEmpleados();
+                CargaServicios();
             });
-            var cont = 0;
-            var id_fila_selected = [];
+
             function agregar() {
                 cont++;
-                var long = $("#tbBody tr").length;
-                var atributos = $('#ServicioList').find('option:selected');
-                var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
-                
-                var fila = '<tr class="selected" id="fila' + cont + '" onclick="seleccionar(this.id);"><td>' +
-                    cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>" + "</tr>";
-                
-                $('#tabla').append(fila);
-                reordenar();
-            }
+                var Condi = $('#ServicioList').find('option:selected').attr('id');
 
+                if (Condi >= 1)
+                {
+                    var atributos = $('#ServicioList').find('option:selected');
+                    var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
+
+                    var fila = '<tr class="selected" id="fila' + cont + '" onclick="seleccionar(this.id);"><td>' +
+                        cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>" + "</tr>";
+
+                    $('#tabla').append(fila);
+                    reordenar();
+                } else {
+
+                    alert("Servicio no seleccionado!!");
+                }             
+            }
             function seleccionar(id_fila) {
                 if ($('#' + id_fila).hasClass('seleccionada')) {
                     $('#' + id_fila).removeClass('seleccionada');
@@ -152,16 +168,12 @@
                 //2702id_fila_selected=id_fila;
                 id_fila_selected.push(id_fila);
             }
-
             function eliminar(id_fila) {
-                /*$('#'+id_fila).remove();
-                reordenar();*/
                 for (var i = 0; i < id_fila.length; i++) {
                     $('#' + id_fila[i]).remove();
                 }
                 reordenar();
             }
-
             function reordenar() {
                 var num = 1;
                 $('#tabla tbody tr').each(function () {
@@ -169,31 +181,50 @@
                     num++;
                 });
             }
-            function eliminarTodasFilas() {
-                $('#tabla tbody tr').each(function () {
-                    $(this).remove();
-                });
-
+            function CargaServicios() {
+                $.getJSON("/Cargador/ListaServiciosCitas",
+                    {
+                        id: 1
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.servicioId;
+                            var Precio = lista.precio;
+                            var Nombre = lista.nombre;
+                            var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
+                            $('#ServicioList').append(option);
+                        });
+                    });
             }
-
-            ///////////////////////////////////////////////////////////////////////////
-            var cId = 0; var eId = 0; var sId = 0;
-            $(document).ready(function () {
-                CargarClientes();
-                CargarEmpleados();
-                CargaServicios();
-            });
-            $(document).off('.datepicker.data-api');
-            $('#dpFecha').datepicker({
-                format: 'dd/mm/yyyy',
-                autoclose: true
-            });
-            $("#Borrar").click(function () {
-                var trs = $("#tDetalle tr").length;
-                if (trs > 1) {
-                    $("#tDetalle tr:last").remove();
-                }
-            });
+            function CargarClientes() {
+                $.getJSON("/Cargador/ListaClientesCitas",
+                    {
+                        id: 1
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.clienteId;
+                            var Nombre = lista.nombres;
+                            var option = "<option id='" + Id + "'value='" + Id + "'>" + Nombre + "</option>";
+                            $('#ClienteList').append(option);
+                        });
+                    });
+            }
+            function CargarEmpleados() {
+                $.getJSON("/Cargador/ListaEmpleadosCitas",
+                    {
+                        id: 1
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.empleadoId;
+                            var Nombre = lista.nombres;
+                            var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
+                            $('#EmpleadoList').append(option);
+                        });
+                    });
+            }
+            
             function CrearDetalle(ciId) {
                 $('#tbBody tr').each(function () {
                     var Contenido = new Array();
@@ -210,20 +241,6 @@
                     console.log(Contenido);
                     SentDetails(Contenido);
                 });
-            }
-            function AgregarDetalle() {
-
-                var long = $("#tbBody tr").length;
-                var atributos = $('#ServicioList').find('option:selected');
-                var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
-
-                var fila = "<tr>";
-                fila += "<td>" + (long + 1) + "</td>";
-                fila += "<td>" + ServicioListId + "</td>";
-                fila += "<td>" + atributos.text() + "</td>";
-                fila += "</tr>";
-
-                $('#tabla tbody').append(fila);
             }
             function SentDetails(detail) {
                 var pack = JSON.stringify(detail);
@@ -244,7 +261,6 @@
                         }
                     });
             }
-
             function EnviarCita(personas) {
                 var pack = JSON.stringify(personas);
                 $.ajax(
@@ -301,49 +317,7 @@
                 $('#tbBody tr').remove();
             }
 
-            function CargaServicios() {
-                $.getJSON("/Cargador/ListaServiciosCitas",
-                    {
-                        id: 1
-                    },
-                    function (lista) {
-                        $.each(lista, function (index, lista) {
-                            var Id = lista.servicioId;
-                            var Precio = lista.precio;
-                            var Nombre = lista.nombre;
-                            var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
-                            $('#ServicioList').append(option);
-                        });
-                    });
-            }
-            function CargarClientes() {
-                $.getJSON("/Cargador/ListaClientesCitas",
-                    {
-                        id: 1
-                    },
-                    function (lista) {
-                        $.each(lista, function (index, lista) {
-                            var Id = lista.clienteId;
-                            var Nombre = lista.nombres;
-                            var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
-                            $('#ClienteList').append(option);
-                        });
-                    });
-            }
-            function CargarEmpleados() {
-                $.getJSON("/Cargador/ListaEmpleadosCitas",
-                    {
-                        id: 1
-                    },
-                    function (lista) {
-                        $.each(lista, function (index, lista) {
-                            var Id = lista.empleadoId;
-                            var Nombre = lista.nombres;
-                            var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
-                            $('#EmpleadoList').append(option);
-                        });
-                    });
-            }
+            
         </script>
     }
 }

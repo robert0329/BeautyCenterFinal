@@ -1,21 +1,12 @@
 create table Citas (
 CitaId int identity(1, 1)not null primary key,
-Nombres   varchar(50),
 ClienteId  int,
-Servicio  varchar (100) ,
-CantPersonas int ,
+Nombres   varchar(100),
+ServicioId int,
+Servicio  varchar(100) ,
+EmpleadoId int,
+NombreE varchar(100),
 Fecha datetime
-);
-
-create table Ciudades (
-CiudadId   int identity(1, 1)not null primary key,
-NombreCiudad varchar(100),
-);
-
-create table Provincias (
-ProvinviaId int identity(1,1)not null primary key,
-CiudadId int,
-NombreProv varchar(100),
 );
 
 create table Clientes (
@@ -44,10 +35,9 @@ SueldoFijo decimal
 create table DetalleCitas(
 Id  int identity(1,1)not null primary key,
 CitaId int,
-Servicio varchar(25),
 ClienteId int ,
-Nombres varchar(50),
-Costo float(53)  
+ServicioId int,
+EmpleadoId int 
 );
 
 create table FacturaDetalles(
@@ -57,14 +47,6 @@ ServicioId varchar(25),
 Costo      float(53),
 Descuento  float(53),
 SubTotal  float(53)  
-);
-create table DetalleCitas(
-Id int identity(1,1) not null primary key,
-CitaId int foreign key references Citas,
-Nombres varchar(300),
-ClienteId int,
-Servicio varchar(100),
-Costo float
 );
 
 create table Facturas (

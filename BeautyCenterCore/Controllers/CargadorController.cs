@@ -15,6 +15,13 @@ namespace BeautyCenterCore.Controllers
             return View();
         }
         [HttpGet]
+        public JsonResult ServiciosCitas(int id)
+        {
+            var listado = BLL.ServiciosBLL.ListarId(id);
+
+            return Json(listado);
+        }
+        [HttpGet]
         public JsonResult ListaServiciosCitas(int id)
         {
             var listado = BLL.ServiciosBLL.Listar();

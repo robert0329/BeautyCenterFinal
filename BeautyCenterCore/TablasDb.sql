@@ -29,10 +29,10 @@ Direccion varchar(300),
 Cedula  varchar(25) ,
 Telefono varchar(15) ,
 FechaNac datetime,
-SueldoFijo decimal
+SueldoFijo float
 );
 
-create table DetalleCitas(
+create table CitasDetalles(
 Id  int identity(1,1)not null primary key,
 CitaId int,
 ClienteId int ,
@@ -59,6 +59,15 @@ Total decimal(18),
 create table Servicios(
 ServicioId int identity(1,1)not null primary key,
 Nombre varchar(100),
-Costo decimal(18) ,
+Precio float(18) ,
 );
 
+create table Usuarios(
+UsuarioId int identity(1,1) not null,
+Nombre varchar(50),
+Apellido varchar(100),
+Email varchar(100),
+NombreUsuario varchar(25),
+Contrasena varchar(20),
+ConfirmContrasena varchar(20)
+);

@@ -38,45 +38,45 @@
         <h4>Citas</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <form id="form1">
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Cliente</span>
+                    <select class="form-control selected" id="ClienteList">
+                        <option value="0" disabled selected> </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Empleado</span>
+                    <select class="form-control selected" id="EmpleadoList">
+                        <option value="0" disabled selected> </option>
+                    </select>
+                </div>
+            </div>
 
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon">Cliente</span>
-                <select class="form-control selected" id="ClienteList">
-                    <option value="0" disabled selected>Clientes</option>
-                </select>
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-calendar"> Fecha:</span>
+                    <input class="form-control input-group input" type="text" placeholder="Fecha" id="dpFecha" required readonly />
+                </div>
             </div>
-        </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Servicios</span>
+                    <select class="form-control selected" id="ServicioList">
+                        <option value="0" disabled selected> </option>
+                    </select>
+                    <button class="btn btn-secondary" id="bt_del" type="button">Eliminar</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon">Empleado</span>
-                <select class="form-control selected" id="EmpleadoList">
-                    <option value="" disabled selected>Empleados</option>
-                </select>
-            </div>
-        </div>
-        <div asp-validation-summary="All" class="text-danger"></div>
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon glyphicon glyphicon-calendar"> Fecha:</span>
-                <input class="form-control input-group input" type="text" placeholder="Fecha" id="dpFecha" required readonly />
-            </div>
-        </div>
+    <div>
 
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon">Servicios</span>
-                <select class="form-control selected" id="ServicioList">
-                    <option value="0" disabled selected>Servicios</option>
-                </select>
-                <button type="button" id="bt_add" class="btn btn-default">Agregar</button>
-                <button type="button" id="bt_del" class="btn btn-default">Eliminar</button>
-                @*<button type="button" id="bt_delall" class="btn btn-default">Eliminar todo</button>*@
-            </div>
-        </div>
-        </div>
-        <div>
         <div id="content">
             <table id="tabla" class="table table-bordered">
                 <thead>
@@ -89,75 +89,81 @@
                 <tbody id="tbBody"></tbody>
             </table>
         </div>
-
         <div class="form-group text-center col-xl-12">
             <div class="col-md-offset-2 col-md-10">
-                <button type="button" class="btn btn-success col-sm-2" id="btnCrear" onclick="CrearCita()">Crear</button>
+                <button type="button" class="btn btn-success col-sm-2" id="btnCrear" onclick="Validaciones()">Crear</button>
             </div>
         </div>
     </div>
-    
 
 }
 <div>
     <a asp-action="Index">Back to List</a>
+    <font face="times new roman" size="6" color="black">
+        <p class="validateTips"></p>
+    </font>
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="~/js/bootstrap-datepicker.min.js"></script>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <script src="js/jquery-2.1.1.min.js"></script>
-        <link rel="stylesheet" href="css/bootstrap.css">
-        <script type="text/javascript" src="~/js/moment.min.js"></script>
-        <script src="~/js/bootstrap.js"></script>
-        <script type="text/javascript" src="~/js/moment-with-locales.min.js"></script>
         <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="~/js/moment.min.js"></script>
+        <script src="~/js/moment-with-locales.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script type="text/javascript">
+            var f = new Array();
+            var Contenido = new Array(), cont = 0, id_fila_selected = [], Fil = 0, Fi = [], cId = 0, eId = 0, sId = 0, num = 1;
+            CargarClientes(); CargarEmpleados(); CargaServicios();
 
-            var cont = 0;
-            var id_fila_selected = [];
-            var cId = 0; var eId = 0; var sId = 0;
-
-            $(document).off('.datepicker.data-api');
-            $('#dpFecha').datepicker({
-                format: 'dd/mm/yyyy',
-                autoclose: true
-            });
+            $(document).off('.datepicker.data-api'); $('#dpFecha').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
             $(document).ready(function () {
-                $('#bt_add').click(function () {
-                    agregar();
-                });
                 $('#bt_del').click(function () {
-                    eliminar(id_fila_selected);
-                });
-                $('#bt_delall').click(function () {
-                    eliminarTodasFilas();
-                });
-                CargarClientes();
-                CargarEmpleados();
-                CargaServicios();
-            });
-
-            function agregar() {
-                cont++;
-                var Condi = $('#ServicioList').find('option:selected').attr('id');
-
-                if (Condi >= 1)
-                {
-                    var atributos = $('#ServicioList').find('option:selected');
-                    var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
-
-                    var fila = '<tr class="selected" id="fila' + cont + '" onclick="seleccionar(this.id);"><td>' +
-                        cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>" + "</tr>";
-
-                    $('#tabla').append(fila);
+                    for (var i = 0; i < id_fila_selected.length; i++) {
+                        $('#' + id_fila_selected[i]).remove();
+                        $('#ServicioList').append(f);
+                    }
                     reordenar();
-                } else {
+                    Servicios();
+                });
+            });
+            
+            $("#ServicioList").change(function () {
+                cont++;
+                var atributos = $('#ServicioList').find('option:selected');
+                var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
 
-                    alert("Servicio no seleccionado!!");
-                }             
-            }
+                var fila = '<tr class="selected" id="fila' + cont + '" onclick="seleccionar(this.id);"><td>' +
+                    cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>" + "</tr>";
+
+                $('#tabla').append(fila);
+
+                f = $('#ServicioList option:selected');
+                $('#ServicioList option:selected').remove();
+
+                $('#ServicioList').val($('#ServicioList > option:first').val());
+            });
+            //$(function () {
+            //    $("#bt_del").click(function () {
+            //        $("#tabla tbody tr").each(function (index) {
+            //            var campo1, campo2, campo3;
+            //            $(this).children("td").each(function (index2) {
+            //                switch (index2) {
+            //                    case 0: campo1 = $(this).text();
+            //                        break;
+            //                    case 1: campo2 = $(this).text();
+            //                        break;
+            //                    case 2: campo3 = $(this).text();
+            //                        break;
+            //                }
+            //                $(this).css("background-color", "#ECF8E0");
+            //            })
+            //            alert(campo1 + ' - ' + campo2 + ' - ' + campo3);
+            //            Fil = campo2;
+            //        })
+            //    })
+            //})
             function seleccionar(id_fila) {
                 if ($('#' + id_fila).hasClass('seleccionada')) {
                     $('#' + id_fila).removeClass('seleccionada');
@@ -165,21 +171,114 @@
                 else {
                     $('#' + id_fila).addClass('seleccionada');
                 }
-                //2702id_fila_selected=id_fila;
                 id_fila_selected.push(id_fila);
-            }
-            function eliminar(id_fila) {
-                for (var i = 0; i < id_fila.length; i++) {
-                    $('#' + id_fila[i]).remove();
-                }
-                reordenar();
+                alert(f);
             }
             function reordenar() {
-                var num = 1;
+
                 $('#tabla tbody tr').each(function () {
                     $(this).find('td').eq(0).text(num);
                     num++;
                 });
+                $("#ServicioList option:selected").removeAttr('disabled');
+            }
+            function CrearDetalle(ciId) {
+                $('#tbBody tr').each(function () {
+
+                    var CitaId = ciId;
+                    var Ser = $(this).find('td').eq(1).html();
+                    Contenido.push(
+                        {
+                            Id: 0,
+                            CitaId: CitaId,
+                            ClienteId: cId,
+                            ServicioId: Ser,
+                            EmpleadoId: eId
+                        });
+                    console.log(Contenido);
+                    SentDetails(Contenido);
+                });
+            }
+            function SentDetails(detail) {
+                var pack = JSON.stringify(detail);
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/Cargador/GuardarDetalleCitas",
+                        data: pack,
+                        contentType: "application/json",
+                        success: function (data) {
+                            if (!data) {
+                                alert("No se guardo el detalle");
+                            }
+                            else {
+                                updateTips("Peticion realizada con exito!!");
+                                Limpiar();
+                            }
+                        }
+                    });
+            }
+            function EnviarCita(personas) {
+                var pack = JSON.stringify(personas);
+                $.ajax(
+                    {
+                        method: "POST",
+                        url: "/Cargador/GuardarCitas",
+                        data: personas,
+
+                        success: function (id) {
+                            if (parseInt(id) > 0) {
+                                CrearDetalle(id);
+                            }
+                            else {
+                                updateTips("No pueden haber campos vacios!!");
+                            }
+                        }
+                    });
+            };
+            function CrearCita() {
+                var ClienteList = $('#ClienteList').find('option:selected');
+                var ClienteListId = $('#ClienteList').find('option:selected').attr('id'); cId = ClienteListId;
+
+                var ServicioList = $('#ServicioList').find('option:selected');
+                var ServicioListId = $('#ServicioList').find('option:selected').attr('id'); sId = ServicioListId;
+
+                var EmpleadoList = $('#EmpleadoList').find('option:selected');
+                var EmpleadoListId = $('#EmpleadoList').find('option:selected').attr('id'); eId = EmpleadoListId;
+
+                var dstr = $('#dpFecha').val();
+
+                var Citas = {
+                    CitaId: 0,
+
+                    ClienteId: ClienteListId,
+                    Nombres: ClienteList.text(),
+
+                    ServicioId: ServicioListId,
+                    Servicio: ServicioList.text(),
+
+                    EmpleadoId: EmpleadoListId,
+                    NombreE: EmpleadoList.text(),
+
+                    Fecha: dstr
+                }
+                console.log(Citas);
+                EnviarCita(Citas);
+            }
+            function Servicios(Fil) {
+                $.getJSON("/Cargador/ServiciosCitas",
+                    {
+                        id: Fil
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.servicioId;
+                            var Precio = lista.precio;
+                            var Nombre = lista.nombre;
+                            var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
+                            $('#ServicioList').append(option);
+                        });
+                    });
             }
             function CargaServicios() {
                 $.getJSON("/Cargador/ListaServiciosCitas",
@@ -224,100 +323,52 @@
                         });
                     });
             }
-            
-            function CrearDetalle(ciId) {
-                $('#tbBody tr').each(function () {
-                    var Contenido = new Array();
-                    var CitaId = ciId;
-                    var Ser = $(this).find('td').eq(1).html();
-                    Contenido.push(
-                        {
-                            Id: 0,
-                            CitaId: CitaId,
-                            ClienteId: cId,
-                            ServicioId: Ser,
-                            EmpleadoId: eId
-                        });
-                    console.log(Contenido);
-                    SentDetails(Contenido);
-                });
-            }
-            function SentDetails(detail) {
-                var pack = JSON.stringify(detail);
-                $.ajax(
-                    {
-                        type: "POST",
-                        url: "/Cargador/GuardarDetalleCitas",
-                        data: pack,
-                        contentType: "application/json",
-                        success: function (data) {
-                            if (!data) {
-                                alert("No se guardo el detalle");
-                            }
-                            else {
-                                alert("Se Guardo");
-                                Limpiar();
-                            }
-                        }
-                    });
-            }
-            function EnviarCita(personas) {
-                var pack = JSON.stringify(personas);
-                $.ajax(
-                    {
-                        method: "POST",
-                        url: "/Cargador/GuardarCitas",
-                        data: personas,
-
-                        success: function (id) {
-                            if (parseInt(id) > 0) {
-                                CrearDetalle(id);
-                            }
-                            else {
-                                alert("No se Guardo!!!!!");
-                            }
-                        }
-                    });
-            };
-            function CrearCita() {
-                var ClienteList = $('#ClienteList').find('option:selected');
-                var ClienteListId = $('#ClienteList').find('option:selected').attr('id'); cId = ClienteListId;
-
-                var ServicioList = $('#ServicioList').find('option:selected');
-                var ServicioListId = $('#ServicioList').find('option:selected').attr('id'); sId = ServicioListId;
-
-                var EmpleadoList = $('#EmpleadoList').find('option:selected');
-                var EmpleadoListId = $('#EmpleadoList').find('option:selected').attr('id'); eId = EmpleadoListId;
-
-                var p = "09/09/09";
-                var dstr = $('#dpFecha').val();
-
-                var Citas = {
-                    CitaId: 0,
-
-                    ClienteId: ClienteListId,
-                    Nombres: ClienteList.text(),
-
-                    ServicioId: ServicioListId,
-                    Servicio: ServicioList.text(),
-
-                    EmpleadoId: EmpleadoListId,
-                    NombreE: EmpleadoList.text(),
-
-                    Fecha: dstr
-                }
-                console.log(Citas);
-                EnviarCita(Citas);
-            }
-
             function Limpiar() {
                 $('#inpId').val("");
                 $('#tbCantPersonas').val("");
                 $('#dpFecha').val("");
                 $('#tbBody tr').remove();
             }
+            function updateTips(t) {
+                tips
+                    .text(t)
+                    .addClass("ui-state-highlight");
+                setTimeout(function () {
+                    tips.removeClass("ui-state-highlight", 1500);
+                }, 500);
+            }
+            var Id = $("#ClienteList"),
+                FECHA = $("#dpFecha"),
+                allFields = $([]).add(FECHA).add(Id),
+                tips = $(".validateTips");
+            function checkLength(obj, name, min, max) {
+                if (obj.val().length > max || obj.val().length < min) {
+                    obj.addClass("ui-state-error");
+                    obj.focus();
+                    updateTips("Ingrese la fecha");
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            function Validaciones() {
+                var valid = true;
+                allFields.removeClass("ui-state-error");
+                //updateTips("Todos los campos son obligatorios");
+                valid = valid && checkLength(FECHA, "Fecha", 10, 11);
+                valid = valid && checkLength(Id, "Cliente", 5, 100);
 
-            
+                if (sId < 0 && cId < 0 && eId < 0) {
+                    updateTips("Debe Completar los campos");
+                    valid = false;
+                }
+                else {
+                    valid = true;
+                }
+                if (valid) {
+                    CrearCita();
+                }
+            }
         </script>
     }
 }

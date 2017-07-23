@@ -99,7 +99,23 @@ namespace BeautyCenterCore.BLL
             }
             return listado;
         }
+        public static List<Servicios> ListarId(int Id)
+        {
+            List<Servicios> list = new List<Servicios>();
+            using (var db = new BeautyCoreDb())
+            {
+                try
+                {
+                    list = db.Servicios.Where(p => p.ServicioId == Id).ToList();
+                }
+                catch (Exception)
+                {
 
+                    throw;
+                }
+            }
+            return list;
+        }
         public static bool Eliminar(int? nuevoId)
         {
             try

@@ -43,9 +43,11 @@ EmpleadoId int
 create table FacturaDetalles(
 Id int identity(1,1)not null primary key,
 FacturaId int ,
-ServicioId varchar(25),
-Costo      float(53),
+ClienteId int,
+ServicioId int,
+Precio     float(53),
 Descuento  float(53),
+Cantidad  int,
 SubTotal  float(53)  
 );
 
@@ -53,7 +55,7 @@ create table Facturas (
 FacturaId int identity(1,1)not null primary key,
 ClienteId int foreign key references Clientes,
 Fecha datetime ,
-Total decimal(18),
+Total float,
 );
 
 create table Servicios(

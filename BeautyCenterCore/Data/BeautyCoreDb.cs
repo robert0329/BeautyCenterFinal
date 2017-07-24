@@ -32,5 +32,7 @@ namespace BeautyCenterCore.Models
         public DbSet<BeautyCenterCore.Models.CitasDetalles> CitasDetalles { get; set; }
 
         public DbSet<BeautyCenterCore.Models.FacturaDetalles> FacturaDetalles { get; set; }
+
+        public DbSet<BeautyCenterCore.Models.Facturas> Facturas { get; set; }
     }
 }

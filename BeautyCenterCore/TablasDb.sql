@@ -70,6 +70,6 @@ Nombre varchar(50),
 Apellido varchar(100),
 Email varchar(100),
 NombreUsuario varchar(25),
-Contrasena varchar(20),
-ConfirmContrasena varchar(20)
+Contraseña varchar(20),
+ConfirmContraseña varchar(20)
 );

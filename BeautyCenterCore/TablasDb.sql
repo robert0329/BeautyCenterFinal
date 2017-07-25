@@ -53,7 +53,7 @@ SubTotal  float(53)
 
 create table Facturas (
 FacturaId int identity(1,1)not null primary key,
-ClienteId int foreign key references Clientes,
+Cliente varchar(200),
 Fecha datetime ,
 Total float,
 );

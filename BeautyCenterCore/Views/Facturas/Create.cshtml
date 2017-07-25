@@ -6,6 +6,10 @@
 
 <h2>Create</h2>
 
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
 <form asp-action="Create">
     <div class="form-horizontal">
         <h4>Facturas</h4>
@@ -40,6 +44,7 @@
     </div>
 </form>
 
+}
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

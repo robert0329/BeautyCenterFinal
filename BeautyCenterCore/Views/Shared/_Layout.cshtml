@@ -35,6 +35,7 @@
                 <ul class="nav navbar-nav">
                     <li class="divider"></li>
                     <li><a asp-area="" asp-controller="Facturas" asp-action="Create">Facturas</a></li>
+
                     @if (Context.Session.GetString("UsuarioId") != null)
                     {
                         <li class="dropdown">

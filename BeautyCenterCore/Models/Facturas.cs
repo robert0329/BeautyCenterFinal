@@ -10,7 +10,7 @@ namespace BeautyCenterCore.Models
     {
         [Key]
         public int FacturaId { get; set; }
-        public int ClienteId { get; set; }
+        public string Cliente { get; set; }
         public DateTime Fecha { get; set; }
         public double Total { get; set; }
     }

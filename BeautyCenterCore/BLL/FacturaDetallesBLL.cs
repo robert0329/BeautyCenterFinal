@@ -17,7 +17,7 @@ namespace BeautyCenterCore.BLL
                 {
                     foreach (FacturaDetalles detail in detalles)
                     {
-                        db.CitasDetalles.Add(detail);
+                        db.FacturaDetalles.Add(detail);
                         db.SaveChanges();
                         resultado = true;
                     }

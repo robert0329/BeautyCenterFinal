@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeautyCenterCore.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BeautyCenterCore.Controllers
 {
+    [Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
     public class FacturasController : Controller
     {
         private readonly BeautyCoreDb _context;
@@ -19,9 +21,9 @@ namespace BeautyCenterCore.Controllers
         }
 
         // GET: Facturas
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Facturas.ToListAsync());
+            return View(BLL.FacturasBLL.Listar());
         }
 
         // GET: Facturas/Details/5
@@ -53,26 +55,25 @@ namespace BeautyCenterCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FacturaId,ClienteId,Fecha,Total")] Facturas facturas)
+        public IActionResult Create([Bind("FacturaId,ClienteId,Fecha,Total")] Facturas facturas)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(facturas);
-                await _context.SaveChangesAsync();
+                BLL.FacturasBLL.Guardar(facturas);
                 return RedirectToAction("Index");
             }
             return View(facturas);
         }
 
         // GET: Facturas/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var facturas = await _context.Facturas.SingleOrDefaultAsync(m => m.FacturaId == id);
+            var facturas = BLL.FacturasBLL.Buscarr(id);
             if (facturas == null)
             {
                 return NotFound();
@@ -96,7 +97,7 @@ namespace BeautyCenterCore.Controllers
             {
                 try
                 {
-                    _context.Update(facturas);
+                    BLL.FacturasBLL.Modificar(facturas);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -116,15 +117,14 @@ namespace BeautyCenterCore.Controllers
         }
 
         // GET: Facturas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var facturas = await _context.Facturas
-                .SingleOrDefaultAsync(m => m.FacturaId == id);
+            var facturas = BLL.FacturasBLL.Buscarr(id);
             if (facturas == null)
             {
                 return NotFound();
@@ -136,11 +136,10 @@ namespace BeautyCenterCore.Controllers
         // POST: Facturas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var facturas = await _context.Facturas.SingleOrDefaultAsync(m => m.FacturaId == id);
-            _context.Facturas.Remove(facturas);
-            await _context.SaveChangesAsync();
+            var Facturas = BLL.FacturasBLL.Buscarr(id);
+            BLL.FacturasBLL.Eliminar(Facturas);
             return RedirectToAction("Index");
         }
 

@@ -10,23 +10,23 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BeautyCenterCore.Controllers
 {
-   // [Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
-    public class CitasController : Controller
+    //[Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
+    public class FacturasController : Controller
     {
         private readonly BeautyCoreDb _context;
 
-        public CitasController(BeautyCoreDb context)
+        public FacturasController(BeautyCoreDb context)
         {
             _context = context;    
         }
 
-        // GET: Citas
+        // GET: Facturas
         public IActionResult Index()
         {
-            return View(BLL.CitasBLL.Listar());
+            return View(BLL.FacturasBLL.Listar());
         }
 
-        // GET: Citas/Details/5
+        // GET: Facturas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,38 +34,38 @@ namespace BeautyCenterCore.Controllers
                 return NotFound();
             }
 
-            var citas = await _context.Citas
-                .SingleOrDefaultAsync(m => m.CitaId == id);
-            if (citas == null)
+            var facturas = await _context.Facturas
+                .SingleOrDefaultAsync(m => m.FacturaId == id);
+            if (facturas == null)
             {
                 return NotFound();
             }
 
-            return View(citas);
+            return View(facturas);
         }
 
-        // GET: Citas/Create
+        // GET: Facturas/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Citas/Create
+        // POST: Facturas/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("CitaId,ClienteId,Nombres,ServicioId,Servicio,EmpleadoId,NombreE,Fecha")] Citas citas)
+        public IActionResult Create([Bind("FacturaId,Cliente,Fecha,Total")] Facturas facturas)
         {
             if (ModelState.IsValid)
             {
-                BLL.CitasBLL.Guardar(citas);
+                BLL.FacturasBLL.Guardar(facturas);
                 return RedirectToAction("Index");
             }
-            return View(citas);
+            return View(facturas);
         }
 
-        // GET: Citas/Edit/5
+        // GET: Facturas/Edit/5
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace BeautyCenterCore.Controllers
                 return NotFound();
             }
 
-            var citas = BLL.CitasBLL.Buscar(id);
-            if (citas == null)
+            var facturas = BLL.FacturasBLL.Buscarr(id);
+            if (facturas == null)
             {
                 return NotFound();
             }
-            return View(citas);
+            return View(facturas);
         }
 
-        // POST: Citas/Edit/5
+        // POST: Facturas/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CitaId,ClienteId,Nombres,ServicioId,Servicio,EmpleadoId,NombreE,Fecha")] Citas citas)
+        public async Task<IActionResult> Edit(int id, [Bind("FacturaId,Cliente,Fecha,Total")] Facturas facturas)
         {
-            if (id != citas.CitaId)
+            if (id != facturas.FacturaId)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace BeautyCenterCore.Controllers
             {
                 try
                 {
-                    BLL.CitasBLL.Modificar(citas);
+                    BLL.FacturasBLL.Modificar(facturas);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CitasExists(citas.CitaId))
+                    if (!FacturasExists(facturas.FacturaId))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace BeautyCenterCore.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(citas);
+            return View(facturas);
         }
 
-        // GET: Citas/Delete/5
+        // GET: Facturas/Delete/5
         public IActionResult Delete(int? id)
         {
             if (id == null)
@@ -124,28 +124,28 @@ namespace BeautyCenterCore.Controllers
                 return NotFound();
             }
 
-            var citas = BLL.CitasBLL.Buscar(id);
-            if (citas == null)
+            var facturas = BLL.FacturasBLL.Buscarr(id);
+            if (facturas == null)
             {
                 return NotFound();
             }
 
-            return View(citas);
+            return View(facturas);
         }
 
-        // POST: Citas/Delete/5
+        // POST: Facturas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var citas = BLL.CitasBLL.Buscarr(id);
-            BLL.CitasBLL.Eliminar(citas);
+            var Facturas = BLL.FacturasBLL.Buscarr(id);
+            BLL.FacturasBLL.Eliminar(Facturas);
             return RedirectToAction("Index");
         }
 
-        private bool CitasExists(int id)
+        private bool FacturasExists(int id)
         {
-            return _context.Citas.Any(e => e.CitaId == id);
+            return _context.Facturas.Any(e => e.FacturaId == id);
         }
     }
 }

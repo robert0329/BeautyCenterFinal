@@ -15,7 +15,8 @@ namespace BeautyCenterCore.Models
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=ROBERT\\SERVIDORES;Initial Catalog=Db;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            optionsBuilder.UseSqlServer("Server=tcp:otroproyecto.database.windows.net,1433;Initial Catalog=BeautyCoreDb;Persist Security Info=False;User ID=yinetjc;Password=C@sa9797;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            //"Server=tcp:otroproyecto.database.windows.net,1433;Initial Catalog=BeautyCoreDb;Persist Security Info=False;User ID=yinetjc;Password=C@sa9797;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
         }
 
         public DbSet<BeautyCenterCore.Models.Citas> Citas { get; set; }
@@ -29,5 +30,9 @@ namespace BeautyCenterCore.Models
         public DbSet<BeautyCenterCore.Models.Usuarios> Usuarios { get; set; }
 
         public DbSet<BeautyCenterCore.Models.CitasDetalles> CitasDetalles { get; set; }
+
+        public DbSet<BeautyCenterCore.Models.FacturaDetalles> FacturaDetalles { get; set; }
+
+        public DbSet<BeautyCenterCore.Models.Facturas> Facturas { get; set; }
     }
 }

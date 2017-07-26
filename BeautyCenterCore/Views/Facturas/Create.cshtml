@@ -1,0 +1,148 @@
+@model BeautyCenterCore.Models.Facturas
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Facturas</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon glyphicon glyphicon-calendar"> Fecha:</span>
+                <input class="form-control input-group input" type="text" placeholder="Fecha" id="dpFecha" required readonly />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Cliente</span>
+                <select class="form-control selected" id="ClienteList">
+                    <option value="0" disabled selected> </option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Servicios</span>
+                <select class="form-control selected" id="ServicioList">
+                    <option value="0" disabled selected> </option>
+                </select>
+                <button class="btn btn-secondary" id="bt_del" type="button">Eliminar</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Total" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Total" class="form-control" />
+                <span asp-validation-for="Total" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</form>
+
+}
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    <script src="~/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/moment-with-locales.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+
+        var f = new Array();
+        var Contenido = new Array(), cont = 0, id_fila_selected = [], Fil = 0, Fi = [], cId = 0, eId = 0, sId = 0, num = 1;
+        CargarClientes(); CargaServicios();
+
+        $(document).off('.datepicker.data-api'); $('#dpFecha').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
+        $(document).ready(function () {
+            $('#bt_del').click(function () {
+                for (var i = 0; i < id_fila_selected.length; i++) {
+                    $('#' + id_fila_selected[i]).remove();
+                    $('#ServicioList').append(f);
+                }
+                reordenar();
+                Servicios();
+            });
+        });
+
+        $("#ServicioList").change(function () {
+            cont++;
+            var atributos = $('#ServicioList').find('option:selected');
+            var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
+
+            var fila = '<tr class="selected" id="fila' + cont + '" onclick="seleccionar(this.id);"><td>' +
+                cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>" + "</tr>";
+
+            $('#tabla').append(fila);
+
+            f = $('#ServicioList option:selected');
+            $('#ServicioList option:selected').remove();
+
+            $('#ServicioList').val($('#ServicioList > option:first').val());
+        });
+
+        function Servicios(Fil) {
+            $.getJSON("/Cargador/ServiciosCitas",
+                {
+                    id: Fil
+                },
+                function (lista) {
+                    $.each(lista, function (index, lista) {
+                        var Id = lista.servicioId;
+                        var Precio = lista.precio;
+                        var Nombre = lista.nombre;
+                        var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
+                        $('#ServicioList').append(option);
+                    });
+                });
+        }
+        function CargaServicios() {
+            $.getJSON("/Cargador/ListaServiciosCitas",
+                {
+                    id: 1
+                },
+                function (lista) {
+                    $.each(lista, function (index, lista) {
+                        var Id = lista.servicioId;
+                        var Precio = lista.precio;
+                        var Nombre = lista.nombre;
+                        var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
+                        $('#ServicioList').append(option);
+                    });
+                });
+        }
+
+        function CargarClientes() {
+            $.getJSON("/CargaFacturas/ListaClientesFacturas",
+                {
+                    id: 1
+                },
+                function (lista) {
+                    $.each(lista, function (index, lista) {
+                        var Id = lista.clienteId;
+                        var Nombre = lista.nombre;
+                        var option = "<option id='" + Id + "'value='" + Id + "'>" + Nombre + "</option>";
+                        $('#ClienteList').append(option);
+                    });
+                });
+
+    </script>
+
+    }
+}

@@ -6,27 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeautyCenterCore.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace BeautyCenterCore.Controllers
 {
-   // [Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
-    public class CitasController : Controller
+    public class FacturaDetallesController : Controller
     {
         private readonly BeautyCoreDb _context;
 
-        public CitasController(BeautyCoreDb context)
+        public FacturaDetallesController(BeautyCoreDb context)
         {
             _context = context;    
         }
 
-        // GET: Citas
-        public IActionResult Index()
+        // GET: FacturaDetalles
+        public async Task<IActionResult> Index()
         {
-            return View(BLL.CitasBLL.Listar());
+            return View(await _context.FacturaDetalles.ToListAsync());
         }
 
-        // GET: Citas/Details/5
+        // GET: FacturaDetalles/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,61 +32,62 @@ namespace BeautyCenterCore.Controllers
                 return NotFound();
             }
 
-            var citas = await _context.Citas
-                .SingleOrDefaultAsync(m => m.CitaId == id);
-            if (citas == null)
+            var facturaDetalles = await _context.FacturaDetalles
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (facturaDetalles == null)
             {
                 return NotFound();
             }
 
-            return View(citas);
+            return View(facturaDetalles);
         }
 
-        // GET: Citas/Create
+        // GET: FacturaDetalles/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Citas/Create
+        // POST: FacturaDetalles/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("CitaId,ClienteId,Nombres,ServicioId,Servicio,EmpleadoId,NombreE,Fecha")] Citas citas)
+        public async Task<IActionResult> Create([Bind("Id,FacturaId,ClienteId,ServicioId,Precio,Descuento,Cantidad,SubTotal")] FacturaDetalles facturaDetalles)
         {
             if (ModelState.IsValid)
             {
-                BLL.CitasBLL.Guardar(citas);
+                _context.Add(facturaDetalles);
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(citas);
+            return View(facturaDetalles);
         }
 
-        // GET: Citas/Edit/5
-        public IActionResult Edit(int? id)
+        // GET: FacturaDetalles/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var citas = BLL.CitasBLL.Buscar(id);
-            if (citas == null)
+            var facturaDetalles = await _context.FacturaDetalles.SingleOrDefaultAsync(m => m.Id == id);
+            if (facturaDetalles == null)
             {
                 return NotFound();
             }
-            return View(citas);
+            return View(facturaDetalles);
         }
 
-        // POST: Citas/Edit/5
+        // POST: FacturaDetalles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CitaId,ClienteId,Nombres,ServicioId,Servicio,EmpleadoId,NombreE,Fecha")] Citas citas)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FacturaId,ClienteId,ServicioId,Precio,Descuento,Cantidad,SubTotal")] FacturaDetalles facturaDetalles)
         {
-            if (id != citas.CitaId)
+            if (id != facturaDetalles.Id)
             {
                 return NotFound();
             }
@@ -97,12 +96,12 @@ namespace BeautyCenterCore.Controllers
             {
                 try
                 {
-                    BLL.CitasBLL.Modificar(citas);
+                    _context.Update(facturaDetalles);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CitasExists(citas.CitaId))
+                    if (!FacturaDetallesExists(facturaDetalles.Id))
                     {
                         return NotFound();
                     }
@@ -113,39 +112,41 @@ namespace BeautyCenterCore.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(citas);
+            return View(facturaDetalles);
         }
 
-        // GET: Citas/Delete/5
-        public IActionResult Delete(int? id)
+        // GET: FacturaDetalles/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var citas = BLL.CitasBLL.Buscar(id);
-            if (citas == null)
+            var facturaDetalles = await _context.FacturaDetalles
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (facturaDetalles == null)
             {
                 return NotFound();
             }
 
-            return View(citas);
+            return View(facturaDetalles);
         }
 
-        // POST: Citas/Delete/5
+        // POST: FacturaDetalles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var citas = BLL.CitasBLL.Buscarr(id);
-            BLL.CitasBLL.Eliminar(citas);
+            var facturaDetalles = await _context.FacturaDetalles.SingleOrDefaultAsync(m => m.Id == id);
+            _context.FacturaDetalles.Remove(facturaDetalles);
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
-        private bool CitasExists(int id)
+        private bool FacturaDetallesExists(int id)
         {
-            return _context.Citas.Any(e => e.CitaId == id);
+            return _context.FacturaDetalles.Any(e => e.Id == id);
         }
     }
 }

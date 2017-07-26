@@ -55,7 +55,7 @@ namespace BeautyCenterCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("FacturaId,ClienteId,Fecha,Total")] Facturas facturas)
+        public IActionResult Create([Bind("FacturaId,Cliente,Fecha,Total")] Facturas facturas)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace BeautyCenterCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FacturaId,ClienteId,Fecha,Total")] Facturas facturas)
+        public async Task<IActionResult> Edit(int id, [Bind("FacturaId,Cliente,Fecha,Total")] Facturas facturas)
         {
             if (id != facturas.FacturaId)
             {

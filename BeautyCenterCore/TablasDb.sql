@@ -61,7 +61,7 @@ Total float,
 create table Servicios(
 ServicioId int identity(1,1)not null primary key,
 Nombre varchar(100),
-Precio float(18) ,
+Precio float,
 );
 
 create table Usuarios(

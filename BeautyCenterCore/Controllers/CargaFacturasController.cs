@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using BeautyCenterCore.Models;
 using BeautyCenterCore.BLL;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace BeautyCenterCore.Controllers
 {
     public class CargaFacturasController : Controller

@@ -308,8 +308,8 @@
                     function (lista) {
                         $.each(lista, function (index, lista) {
                             var Id = lista.clienteId;
-                            var Nombre = lista.nombre;
-                            var option = "<option id='" + Id + "'value='" + Id + "'>" + Nombre + "</option>";
+                            var Nombre = lista.nombres;
+                            var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
                             $('#ClienteList').append(option);
                         });
                     });

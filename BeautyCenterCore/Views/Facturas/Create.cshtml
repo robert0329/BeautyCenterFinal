@@ -68,13 +68,16 @@
         var f = new Array();
         var Contenido = new Array(), cont = 0, id_fila_selected = [], Fil = 0, Fi = [], cId = 0, eId = 0, sId = 0, num = 1;
         CargarClientes(); CargaServicios();
+        var combo = [];
 
         $(document).off('.datepicker.data-api'); $('#dpFecha').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
         $(document).ready(function () {
             $('#bt_del').click(function () {
                 for (var i = 0; i < id_fila_selected.length; i++) {
                     $('#' + id_fila_selected[i]).remove();
+
                     $('#ServicioList').append(f);
+                    $('#ServicioList').val($('#ServicioList > option:first').val());
                 }
                 reordenar();
                 Servicios();
@@ -96,11 +99,10 @@
 
             $('#ServicioList').val($('#ServicioList > option:first').val());
         });
-
-        function Servicios(Fil) {
+        function Servicios() {
             $.getJSON("/Cargador/ServiciosCitas",
                 {
-                    id: Fil
+                    id: f
                 },
                 function (lista) {
                     $.each(lista, function (index, lista) {
@@ -112,6 +114,7 @@
                     });
                 });
         }
+
         function CargaServicios() {
             $.getJSON("/Cargador/ListaServiciosCitas",
                 {
@@ -124,6 +127,8 @@
                         var Nombre = lista.nombre;
                         var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
                         $('#ServicioList').append(option);
+                        combo = option;
+                        console.log(combo);
                     });
                 });
         }
@@ -136,7 +141,7 @@
                 function (lista) {
                     $.each(lista, function (index, lista) {
                         var Id = lista.clienteId;
-                        var Nombre = lista.nombre;
+                        var Nombre = lista.nombres;
                         var option = "<option id='" + Id + "'value='" + Id + "'>" + Nombre + "</option>";
                         $('#ClienteList').append(option);
                     });

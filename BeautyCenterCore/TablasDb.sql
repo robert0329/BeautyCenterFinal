@@ -44,11 +44,11 @@ create table FacturaDetalles(
 Id int identity(1,1)not null primary key,
 FacturaId int ,
 ClienteId int,
-ServicioId int,
-Precio     float(53),
-Descuento  float(53),
+ServicioId int, 
+Precio    float,
+Descuento float,
 Cantidad  int,
-SubTotal  float(53)  
+SubTotal  float 
 );
 
 create table Facturas (

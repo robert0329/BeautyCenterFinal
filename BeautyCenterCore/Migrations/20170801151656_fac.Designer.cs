@@ -8,9 +8,10 @@ using BeautyCenterCore.Models;
 namespace BeautyCenterCore.Migrations
 {
     [DbContext(typeof(BeautyCoreDb))]
-    partial class BeautyCoreDbModelSnapshot : ModelSnapshot
+    [Migration("20170801151656_fac")]
+    partial class fac
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -127,6 +128,8 @@ namespace BeautyCenterCore.Migrations
 
                     b.Property<int>("Cantidad");
 
+                    b.Property<int>("ClienteId");
+
                     b.Property<double>("Descuento");
 
                     b.Property<int>("FacturaId");
@@ -134,8 +137,6 @@ namespace BeautyCenterCore.Migrations
                     b.Property<double>("Precio");
 
                     b.Property<int>("ServicioId");
-
-                    b.Property<string>("Servicios");
 
                     b.Property<double>("SubTotal");
 

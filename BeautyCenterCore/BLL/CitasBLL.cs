@@ -128,5 +128,26 @@ namespace BeautyCenterCore.BLL
             }
             return nuevo;
         }
+        public static List<Citas> GetListaFecha(DateTime D, DateTime H)
+        {
+            List<Citas> lista = new List<Citas>();
+            using (var db = new BeautyCoreDb())
+            {
+                try
+                {
+                    lista = db.Citas.Where(p => p.Fecha >= D && p.Fecha <= H).ToList();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
+            
+
+            return lista;
+
+        }
     }
 }

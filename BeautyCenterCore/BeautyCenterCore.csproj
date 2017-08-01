@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="BLL\EmpleadosBLL.cs" />
     <Content Include="wwwroot\css\bootstrap-theme.css" />
     <Content Include="wwwroot\css\bootstrap.css" />
     <Content Include="wwwroot\css\external\jquery\jquery.js" />
@@ -34,9 +35,9 @@
     <Content Include="wwwroot\js\jquery-2.1.1.min.js" />
     <Content Include="wwwroot\js\jquery-3.1.1.js" />
     <Content Include="wwwroot\js\jquery-3.1.1.min.js" />
+    <Content Include="wwwroot\js\jquery-ui.js" />
     <Content Include="wwwroot\js\jquery.validate.js" />
     <Content Include="wwwroot\js\jquery.validate.min.js" />
-    <Content Include="wwwroot\js\jquery.validate.unobtrusive.min.js" />
     <Content Include="wwwroot\js\moment-with-locales.js" />
     <Content Include="wwwroot\js\moment-with-locales.min.js" />
     <Content Include="wwwroot\js\moment.js" />

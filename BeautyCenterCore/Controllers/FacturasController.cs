@@ -17,7 +17,7 @@ namespace BeautyCenterCore.Controllers
 
         public FacturasController(BeautyCoreDb context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Facturas

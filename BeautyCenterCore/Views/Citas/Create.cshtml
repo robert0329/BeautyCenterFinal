@@ -5,29 +5,7 @@
 }
 
 <h2>Create</h2>
-<style>
-    #content {
-        position: center;
-        min-height: 100%;
-        width: 60%;
-        top: 20%;
-        left: 5%;
-    }
 
-    .selected {
-        cursor: pointer;
-    }
-
-        /*.selected:hover {
-            background-color: #0585C0;
-            color: white;
-        }*/
-
-    .seleccionada {
-        background-color: #0585C0;
-        color: white;
-    }
-</style>
 
 @using (Html.BeginForm())
 {
@@ -69,14 +47,12 @@
                     <select class="form-control selected" id="ServicioList">
                         <option value="0" disabled selected> </option>
                     </select>
-                    <button class="btn btn-secondary" id="bt_del" type="button">Eliminar</button>
                 </div>
             </div>
         </form>
     </div>
 
     <div>
-
         <div id="content">
             <table id="tabla" class="table table-bordered">
                 <thead>
@@ -84,6 +60,7 @@
                         <td>#</td>
                         <td>ServicioId</td>
                         <td>Servicio</td>
+                        <td>Opcion</td>
                     </tr>
                 </thead>
                 <tbody id="tbBody"></tbody>
@@ -95,7 +72,6 @@
             </div>
         </div>
     </div>
-
 }
 <div>
     <a asp-action="Index">Back to List</a>
@@ -110,80 +86,46 @@
         <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
         <script src="~/js/moment.min.js"></script>
         <script src="~/js/moment-with-locales.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script type="text/javascript">
-            var f = new Array();
-            var Contenido = new Array(), cont = 0, id_fila_selected = [], Fil = 0, Fi = [], cId = 0, eId = 0, sId = 0, num = 1;
-            CargarClientes(); CargarEmpleados(); CargaServicios();
-            var combo = [];
+        <script src="~/js/jquery-3.1.1.min.js"></script>
+        <script src="~/js/jquery-ui.js"></script>
 
+        <script type="text/javascript">
+            var Contenido = new Array(), cont = 0, cId = 0, eId = 0, sId = 0, co = 0;
+            CargarClientes(); CargarEmpleados(); CargaServicios();
+            var campo1, campo2 = 0, campo3;
             $(document).off('.datepicker.data-api'); $('#dpFecha').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
-            $(document).ready(function () {
-                $('#bt_del').click(function () {
-                    for (var i = 0; i < id_fila_selected.length; i++) {
-                        $('#' + id_fila_selected[i]).remove();
-                        
-                        $('#ServicioList').append(f);
-                        $('#ServicioList').val($('#ServicioList > option:first').val());
-                    }
-                    reordenar();
-                    Servicios();
-                });
-            });
+            
             
             $("#ServicioList").change(function () {
-                cont++;
-                var atributos = $('#ServicioList').find('option:selected');
+                var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
+                if (co <= 0) {
+                    //co++;
+                    probar();
+                //} else {
+                //    $('#tbBody tr').each(function (index) {
+                //        var celdas = $(this).find('td');
+
+                //        var p = $(celdas[1]).html();
+                //        probar();   
+                //    });
+                }
+            })
+
+            function probar() {
+                var atributos = $('#ServicioList').find('option:selected'); cont++;
                 var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
 
-                var fila = '<tr class="selected" id="fila' + cont + '" onclick="seleccionar(this.id);"><td>' +
-                    cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>" + "</tr>";
+                var fila = '<tr> <td>' +
+                    cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>"
+                    + "<td>" + '<input type="button" value="Delete" onclick="deleteRow(this)"/>' + "</td>" + "<td> </tr>";
 
                 $('#tabla').append(fila);
-
-                f = $('#ServicioList').find('option:selected');
-                $('#ServicioList option:selected').remove();
-
                 $('#ServicioList').val($('#ServicioList > option:first').val());
-            });
-            //$(function () {
-            //    $("#bt_del").click(function () {
-            //        $("#tabla tbody tr").each(function (index) {
-            //            var campo1, campo2, campo3;
-            //            $(this).children("td").each(function (index2) {
-            //                switch (index2) {
-            //                    case 0: campo1 = $(this).text();
-            //                        break;
-            //                    case 1: campo2 = $(this).text();
-            //                        break;
-            //                    case 2: campo3 = $(this).text();
-            //                        break;
-            //                }
-            //                $(this).css("background-color", "#ECF8E0");
-            //            })
-            //            alert(campo1 + ' - ' + campo2 + ' - ' + campo3);
-            //            Fil = campo2;
-            //        })
-            //    })
-            //})
-            function seleccionar(id_fila) {
-                if ($('#' + id_fila).hasClass('seleccionada')) {
-                    $('#' + id_fila).removeClass('seleccionada');
-                }
-                else {
-                    $('#' + id_fila).addClass('seleccionada');
-                }
-                id_fila_selected.push(id_fila);
-                
             }
-            function reordenar() {
-
-                $('#tabla tbody tr').each(function () {
-                    $(this).find('td').eq(0).text(num);
-                    num++;
-                });
-                $("#ServicioList option:selected").removeAttr('disabled');
+            function deleteRow(r) {
+                var i = r.parentNode.parentNode.rowIndex;
+                document.getElementById("tabla").deleteRow(i);
+                $('#ServicioList').val($('#ServicioList > option:first').val());
             }
             function CrearDetalle(ciId) {
                 $('#tbBody tr').each(function () {
@@ -268,21 +210,7 @@
                 console.log(Citas);
                 EnviarCita(Citas);
             }
-            function Servicios() {
-                $.getJSON("/Cargador/ServiciosCitas",
-                    {
-                        id: f
-                    },
-                    function (lista) {
-                        $.each(lista, function (index, lista) {
-                            var Id = lista.servicioId;
-                            var Precio = lista.precio;
-                            var Nombre = lista.nombre;
-                            var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
-                            $('#ServicioList').append(option);
-                        });
-                    });
-            }
+
             function CargaServicios() {
                 $.getJSON("/Cargador/ListaServiciosCitas",
                     {
@@ -295,8 +223,6 @@
                             var Nombre = lista.nombre;
                             var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
                             $('#ServicioList').append(option);
-                            combo = option;
-                            console.log(combo);
                         });
                     });
             }
@@ -342,10 +268,7 @@
                     tips.removeClass("ui-state-highlight", 1500);
                 }, 500);
             }
-            var Id = $("#ClienteList"),
-                FECHA = $("#dpFecha"),
-                allFields = $([]).add(FECHA).add(Id),
-                tips = $(".validateTips");
+            var Id = $("#ClienteList"), FECHA = $("#dpFecha"), allFields = $([]).add(FECHA).add(Id), tips = $(".validateTips");
             function checkLength(obj, name, min, max) {
                 if (obj.val().length > max || obj.val().length < min) {
                     obj.addClass("ui-state-error");

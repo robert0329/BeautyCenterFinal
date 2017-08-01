@@ -5,29 +5,7 @@
 }
 
 <h2>Create</h2>
-<style>
-    #content {
-        position: center;
-        min-height: 100%;
-        width: 60%;
-        top: 20%;
-        left: 5%;
-    }
 
-    .selected {
-        cursor: pointer;
-    }
-
-    /*.selected:hover {
-            background-color: #0585C0;
-            color: white;
-        }*/
-
-    .seleccionada {
-        background-color: #0585C0;
-        color: white;
-    }
-</style>
 
 @using (Html.BeginForm())
 {
@@ -50,56 +28,72 @@
                     <select class="form-control selected" id="ClienteList">
                         <option value="0" disabled selected> </option>
                     </select>
+
                 </div>
             </div>
             <div class="form-group">
                 <div class="input-group">
-                    <span class="input-group-addon">Servicios</span>
-                    <select class="form-control selected" id="ServicioList">
+                    <span class="input-group-addon">Empleado</span>
+                    <select class="form-control selected" id="EmpleadoList">
                         <option value="0" disabled selected> </option>
                     </select>
-                    <button class="btn btn-secondary" id="bt_del" type="button">Eliminar</button>
-                   <br /> <input class="form-control input-group-sm col-2" type="text" id="tbPrecio" placeholder="Precio" />
                 </div>
             </div>
-                <div class="input-group">
-                    <input class="form-control input-group-sm col-2" type="text" id="tbCantidad" placeholder="Cantidad" />
-                    <input class="form-control input-group-sm col-2" type="text" id="tbDescuento" placeholder="Descuento" />
-                </div>
+
         </form>
     </div>
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon">Servicios</span>
+            <select class="form-control selected" id="ServicioList">
+                <option value="0" disabled selected> </option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon">Precio</span>
+            <input class="form-control input-group-sm col-2" type="text" id="tbPrecio" placeholder="Precio" disabled />
+            <span class="input-group-addon">Cantidad</span>
+            <input class="form-control input-group-sm col-2" type="text" id="tbCantidad" placeholder="Cantidad" />
+            <span class="input-group-addon">Descuento   </span>
+            <input class="form-control input-group-sm col-2" type="text" id="tbDescuento" placeholder="Descuento" />
+            <button type="button" class="btn btn-success col-sm-2" id="btnAgregar" onclick="Agregar()">Agregar</button>
+        </div>
+    </div>
 
-        <div>
-            <div id="content">
-                <table id="tabla" class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>ServicioId</th>
-                            <th>Servicio</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Descuento</th>
-                            <th>SubTotal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbBody"></tbody>
-                </table>
-            </div>
-            <div class="form-group">
-                <label asp-for="Total" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <input asp-for="Total" class="form-control" />
-                    <span asp-validation-for="Total" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="form-group text-center col-xl-12">
-                <div class="col-md-offset-2 col-md-10">
-                    <button type="button" class="btn btn-success col-sm-2" id="btnCrear" onclick="Validaciones()">Crear</button>
-                </div>
+    <div>
+        <div id="content">
+            <table id="tabla" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ServicioId</th>
+                        <th>Servicio</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Descuento</th>
+                        <th>SubTotal</th>
+                        <th>Opcion</th>
+                    </tr>
+                </thead>
+                <tbody id="tbBody"></tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Total:</span>
+                <input class="form-control input-group-lg col-2" type="text" id="tbTotal" value="0" readonly />
             </div>
         </div>
-            
+        <div class="form-group text-center col-xl-12">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" class="btn btn-success col-sm-2" id="btnCrear" onclick="Crear()">Crear</button>
+                <button type="button" class="btn btn-success col-sm-2" id="btnRecorrer">Recorrer</button>
+            </div>
+        </div>
+    </div>
+
 }
 <div>
     <a asp-action="Index">Back to List</a>
@@ -107,99 +101,173 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    <script src="~/js/bootstrap-datepicker.min.js"></script>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
-    <script src="~/js/moment.min.js"></script>
-    <script src="~/js/moment-with-locales.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script type="text/javascript">
+        <script src="~/js/bootstrap-datepicker.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
+        <script src="~/js/moment.min.js"></script>
+        <script src="~/js/moment-with-locales.min.js"></script>
+        <script src="~/js/jquery-3.1.1.min.js"></script>
+        <script src="~/js/jquery-ui.js"></script>
 
-        var f = new Array();
-        var Contenido = new Array(), cont = 0, id_fila_selected = [], Fil = 0, Fi = [], cId = 0, eId = 0, sId = 0, num = 1;
-        CargarClientes(); CargaServicios();
-        var combo = [];
+        <script type="text/javascript">
+            $(document).off('.datepicker.data-api'); $('#dpFecha').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
+            CargarClientes(); CargaServicios(); CargarEmpleados(); var cont = 0; var Contenido = new Array();
 
-        $(document).off('.datepicker.data-api'); $('#dpFecha').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
-        $(document).ready(function () {
-            $('#bt_del').click(function () {
-                for (var i = 0; i < id_fila_selected.length; i++) {
-                    $('#' + id_fila_selected[i]).remove();
+            $("#ServicioList").change(function () {
+                var Precio = $('#ServicioList').find('option:selected').attr('value');
+                $('#tbPrecio').val(Precio);
+            })
+            function Agregar() {
+                var monto = $('#tbTotal').val();
+                var Precio = $('#ServicioList').find('option:selected').attr('value');
 
-                    $('#ServicioList').append(f);
-                    $('#ServicioList').val($('#ServicioList > option:first').val());
+                var atributos = $('#ServicioList').find('option:selected'); cont++;
+                var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
+
+                var Cantidad = $('#tbCantidad').val();
+                var Descuento = $('#tbDescuento').val();
+                var cc = Precio * Cantidad;
+                var sub = cc - Descuento;
+                monto = parseFloat(sub) + parseFloat(monto);
+
+
+                var fila = '<tr> <td>' +
+                    cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>" + "<td>" + Precio + "</td>" + "<td>" + Cantidad + "</td>" + "<td>" + Descuento + "</td>" + "<td>" + sub + "</td>"
+                    + "<td>" + '<input type="button" value="Delete" onclick="deleteRow(this)"onclick="Pre(this)"/>' + "</td>" + " </tr>";
+
+                $('#tabla').append(fila);
+                $('#tbTotal').val(monto);
+                $('#ServicioList').val($('#ServicioList > option:first').val());
+            }
+            function deleteRow(r) {
+                var i = r.parentNode.parentNode.rowIndex;
+                document.getElementById("tabla").deleteRow(i);
+                $('#ServicioList').val($('#ServicioList > option:first').val());
+            }
+
+            function Enviar(personas) {
+                var pack = JSON.stringify(personas);
+                $.ajax(
+                    {
+                        method: "POST",
+                        url: "/CargaFacturas/GuardarFacturas",
+                        data: personas,
+
+                        success: function (id) {
+                            if (parseInt(id) > 0) {
+                                Detalle(id);
+                            }
+                            else {
+                                //updateTips("No pueden haber campos vacios!!");
+                            }
+                        }
+                    });
+            };
+            function Crear() {
+                var ClienteList = $('#ClienteList').find('option:selected');
+                var EmpleadoList = $('#EmpleadoList').find('option:selected');
+
+                var total = $('#tbTotal').val();
+                var fecha = $('#dpFecha').val();
+
+                var Factura = {
+                    CitaId: 0,
+                    Clientes: ClienteList.text(),
+                    Empleados: EmpleadoList.text(),
+                    Fecha: fecha,
+                    Total: total
                 }
-                reordenar();
-                Servicios();
-            });
-        });
+                console.log(Factura);
+                Enviar(Factura);
+            }
+            function Detalle(facturaId) {
+                $('#tbBody tr').each(function () {
 
-        $("#ServicioList").change(function () {
-            cont++;
-            var atributos = $('#ServicioList').find('option:selected');
-            var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
-
-            var fila = '<tr class="selected" id="fila' + cont + '" onclick="seleccionar(this.id);"><td>' +
-                cont + "<td>" + ServicioListId + "</td>" + "<td>" + atributos.text() + "</td>" + "</tr>";
-
-            $('#tabla').append(fila);
-
-            f = $('#ServicioList option:selected');
-            $('#ServicioList option:selected').remove();
-
-            $('#ServicioList').val($('#ServicioList > option:first').val());
-        });
-        function Servicios() {
-            $.getJSON("/CargaFacturas/ServiciosFacturas",
-                {
-                    id: f
-                },
-                function (lista) {
-                    $.each(lista, function (index, lista) {
-                        var Id = lista.servicioId;
-                        var Precio = lista.precio;
-                        var Nombre = lista.nombre;
-                        var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
-                        $('#ServicioList').append(option);
-                    });
+                    var Id = facturaId;
+                    var ServicioId = $(this).find('td').eq(1).html();
+                    var Servicio = $(this).find('td').eq(2).html();
+                    var Precio = $(this).find('td').eq(3).html();
+                    var Cantidad = $(this).find('td').eq(4).html();
+                    var Descuento = $(this).find('td').eq(5).html();
+                    var SubTotal = $(this).find('td').eq(6).html();
+                    Contenido.push(
+                        {
+                            Id: 0,
+                            FacturaId: Id,
+                            ServicioId: ServicioId,
+                            Servicio: Servicio,
+                            Precio: Precio,
+                            Cantidad: Cantidad,
+                            Descuento: Descuento,
+                            SubTotal: SubTotal
+                        });
+                    console.log(Contenido);
+                    EnviarD(Contenido);
                 });
-        }
-
-        function CargaServicios() {
-            $.getJSON("/CargaFacturas/ListaServiciosFacturas",
-                {
-                    id: 1
-                },
-                function (lista) {
-                    $.each(lista, function (index, lista) {
-                        var Id = lista.servicioId;
-                        var Precio = lista.precio;
-                        var Nombre = lista.nombre;
-                        var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
-                        $('#ServicioList').append(option);
-                        combo = option;
-                        console.log(combo);
+            }
+            function EnviarD(detail) {
+                var pack = JSON.stringify(detail);
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/CargaFacturas/GuardarDetalleFacturas",
+                        data: pack,
+                        contentType: "application/json",
+                        success: function (data) {
+                            if (!data) {
+                                alert("No se guardo el detalle");
+                            }
+                            else {
+                                //updateTips("Peticion realizada con exito!!");
+                            }
+                        }
                     });
-                });
-        }
-
-        function CargarClientes() {
-            $.getJSON("/CargaFacturas/ListaClientesFacturas",
-                {
-                    id: 1
-                },
-                function (lista) {
-                    $.each(lista, function (index, lista) {
-                        var Id = lista.clienteId;
-                        var Nombre = lista.nombres;
-                        var option = "<option id='" + Id + "'value='" + Id + "'>" + Nombre + "</option>";
-                        $('#ClienteList').append(option);
+            }
+            function CargaServicios() {
+                $.getJSON("/CargaFacturas/ListaServiciosFacturas",
+                    {
+                        id: 1
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.servicioId;
+                            var Precio = lista.precio;
+                            var Nombre = lista.nombre;
+                            var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
+                            $('#ServicioList').append(option);
+                        });
                     });
-                });
-        }
+            }
+            function CargarClientes() {
+                $.getJSON("/CargaFacturas/ListaClientesFacturas",
+                    {
+                        id: 1
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.clienteId;
+                            var Nombre = lista.nombres;
+                            var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
+                            $('#ClienteList').append(option);
+                        });
+                    });
+            }
+            function CargarEmpleados() {
+                $.getJSON("/CargaFacturas/ListaEmpleadosFacturas",
+                    {
+                        id: 1
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.empleadoId;
+                            var Nombre = lista.nombres;
+                            var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
+                            $('#EmpleadoList').append(option);
+                        });
+                    });
+            }
 
-    </script>
+        </script>
 
     }
 }

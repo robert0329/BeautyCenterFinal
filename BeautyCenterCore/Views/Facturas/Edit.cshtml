@@ -13,10 +13,10 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="FacturaId" />
         <div class="form-group">
-            <label asp-for="ClienteId" class="col-md-2 control-label"></label>
+            <label asp-for="Clientes" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="ClienteId" class="form-control" />
-                <span asp-validation-for="ClienteId" class="text-danger"></span>
+                <input asp-for="Clientes" class="form-control" />
+                <span asp-validation-for="Clientes" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
@@ -31,6 +31,13 @@
             <div class="col-md-10">
                 <input asp-for="Total" class="form-control" />
                 <span asp-validation-for="Total" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Empleados" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Empleados" class="form-control" />
+                <span asp-validation-for="Empleados" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">

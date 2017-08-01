@@ -11,8 +11,8 @@ namespace BeautyCenterCore.Models
         [Key]
         public int Id { get; set; }
         public int FacturaId { get; set; }
-        public int ClienteId { get; set; }
         public int ServicioId { get; set; }
+        public string Servicios { get; set; }
         public double Precio { get; set; }
         public double Descuento { get; set; }
         public int Cantidad { get; set; }

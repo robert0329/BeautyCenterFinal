@@ -14,17 +14,31 @@ namespace BeautyCenterCore.Controllers
     public class CitasController : Controller
     {
         private readonly BeautyCoreDb _context;
+        List<Citas>joder = new List<Citas>();
 
+        [HttpGet]
+        public ActionResult Index()
+        {
+            return View(BLL.CitasBLL.Listar());
+        }
+
+        [HttpGet]
+        public ActionResult Buscar(DateTime Desde, DateTime Hasta)
+        {
+            BLL.CitasBLL.GetListaFecha(Desde, Hasta);
+
+            return Json(BLL.CitasBLL.GetListaFecha(Desde, Hasta));
+        }
         public CitasController(BeautyCoreDb context)
         {
             _context = context;    
         }
 
-        // GET: Citas
-        public IActionResult Index()
-        {
-            return View(BLL.CitasBLL.Listar());
-        }
+        //// GET: Citas
+        //public IActionResult Index()
+        //{
+        //    return View(BLL.CitasBLL.Listar());
+        //}
 
         // GET: Citas/Details/5
         public async Task<IActionResult> Details(int? id)

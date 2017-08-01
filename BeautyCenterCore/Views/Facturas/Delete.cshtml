@@ -13,10 +13,10 @@
     <dl class="dl-horizontal">
         <input type="hidden" asp-for="FacturaId" />
         <dt>
-            @Html.DisplayNameFor(model => model.ClienteId)
+            @Html.DisplayNameFor(model => model.Clientes)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ClienteId)
+            @Html.DisplayFor(model => model.Clientes)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Fecha)
@@ -29,6 +29,12 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Total)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Empleados)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Empleados)
         </dd>
     </dl>
     

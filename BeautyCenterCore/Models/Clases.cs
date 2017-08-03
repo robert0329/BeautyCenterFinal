@@ -7,13 +7,13 @@ namespace BeautyCenterCore.Models
 {
     public class Clases
     {
-        public Citas variable { get; set; }
+        public Facturas Encabezado { get; set; }
 
-        public List<CitasDetalles> Detalle { get; set; }
+        public List<FacturaDetalles> Detalle { get; set; }
 
         public Clases()
         {
-            Detalle = new List<CitasDetalles>();
+            Detalle = new List<FacturaDetalles>();
         }
     }
 }

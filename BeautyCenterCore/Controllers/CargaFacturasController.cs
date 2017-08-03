@@ -15,6 +15,24 @@ namespace BeautyCenterCore.Controllers
             return View();
         }
         [HttpGet]
+        public JsonResult Buscar(int facturaId)
+        {
+             Facturas factura = BLL.FacturasBLL.Buscar(facturaId);
+                return Json(factura);
+        }
+        [HttpGet]
+        public JsonResult BuscarF(int facturaId)
+        {
+            var factura = BLL.FacturasBLL.Listar();
+            return Json(factura);
+        }
+        [HttpGet]
+        public JsonResult BuscarClientes(int? clienteId)
+        {
+            var cliente = BLL.ClientesBLL.Buscar(clienteId);
+            return Json(cliente);
+        }
+        [HttpGet]
         public JsonResult ServiciosFacturas(int id)
         {
             var listado = BLL.ServiciosBLL.ListarId(id);
@@ -43,17 +61,14 @@ namespace BeautyCenterCore.Controllers
             return Json(listado);
         }
         [HttpPost]
-        public JsonResult GuardarFacturas(Facturas nueva)
+        public JsonResult GuardarFacturas(Clases nueva)
         {
-            int id = 0;
+            bool resultado = false;
             if (ModelState.IsValid)
             {
-                if (FacturasBLL.Guardar(nueva))
-                {
-                    id = nueva.FacturaId;
-                }
+               resultado = FacturasBLL.Guardar(nueva);
             }
-            return Json(id);
+            return Json(resultado);
         }
         [HttpPost]
         public JsonResult GuardarDetalleFacturas([FromBody]List<FacturaDetalles> detalles)
@@ -62,6 +77,5 @@ namespace BeautyCenterCore.Controllers
 
             return Json(resultado);
         }
-        
     }
 }

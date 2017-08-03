@@ -108,12 +108,12 @@ namespace BeautyCenterCore.BLL
                 {
                     nuevo = new Clases()
                     {
-                        variable = conexion.Citas.Find(facturaId)
+                        Encabezado = conexion.Facturas.Find(facturaId)
                     };
-                    if (nuevo.variable != null)
+                    if (nuevo.Encabezado != null)
                     {
                         nuevo.Detalle =
-                        BLL.DetalleCitasBLL.Listar(nuevo.variable.CitaId);
+                        BLL.FacturaDetallesBLL.Listar(nuevo.Encabezado.FacturaId);
                     }
                     else
                     {

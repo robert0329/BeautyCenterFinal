@@ -5,31 +5,35 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace BeautyCenterCore.Migrations
 {
-    public partial class nueva : Migration
+    public partial class Hola : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            
+
+            
+
             migrationBuilder.CreateTable(
-                name: "CitasDetalles",
+                name: "Facturas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    FacturaId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CitaId = table.Column<int>(nullable: false),
                     ClienteId = table.Column<int>(nullable: false),
-                    EmpleadoId = table.Column<int>(nullable: false),
-                    ServicioId = table.Column<int>(nullable: false)
+                    Clientes = table.Column<string>(nullable: true),
+                    Empleados = table.Column<string>(nullable: true),
+                    Fecha = table.Column<DateTime>(nullable: false),
+                    Total = table.Column<double>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CitasDetalles", x => x.Id);
+                    table.PrimaryKey("PK_Facturas", x => x.FacturaId);
                 });
-        }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+            
+
             migrationBuilder.DropTable(
-                name: "CitasDetalles");
+                name: "Facturas");
         }
     }
 }

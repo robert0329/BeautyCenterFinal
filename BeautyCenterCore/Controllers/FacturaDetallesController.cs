@@ -17,7 +17,12 @@ namespace BeautyCenterCore.Controllers
         {
             _context = context;    
         }
-
+        [HttpGet]
+        public JsonResult BuscarF(int facturaId)
+        {
+            var factura = BLL.FacturaDetallesBLL.Listar(facturaId);
+            return Json(factura);
+        }
         // GET: FacturaDetalles
         public async Task<IActionResult> Index()
         {

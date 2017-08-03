@@ -8,8 +8,8 @@ using BeautyCenterCore.Models;
 namespace BeautyCenterCore.Migrations
 {
     [DbContext(typeof(BeautyCoreDb))]
-    [Migration("20170720022020_Primera")]
-    partial class Primera
+    [Migration("20170802023326_qlq")]
+    partial class qlq
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,6 +39,24 @@ namespace BeautyCenterCore.Migrations
                     b.HasKey("CitaId");
 
                     b.ToTable("Citas");
+                });
+
+            modelBuilder.Entity("BeautyCenterCore.Models.CitasDetalles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("CitaId");
+
+                    b.Property<int>("ClienteId");
+
+                    b.Property<int>("EmpleadoId");
+
+                    b.Property<int>("ServicioId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CitasDetalles");
                 });
 
             modelBuilder.Entity("BeautyCenterCore.Models.Clientes", b =>
@@ -101,6 +119,50 @@ namespace BeautyCenterCore.Migrations
                     b.HasKey("EmpleadoId");
 
                     b.ToTable("Empleados");
+                });
+
+            modelBuilder.Entity("BeautyCenterCore.Models.FacturaDetalles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Cantidad");
+
+                    b.Property<double>("Descuento");
+
+                    b.Property<int>("FacturaId");
+
+                    b.Property<double>("Precio");
+
+                    b.Property<int>("ServicioId");
+
+                    b.Property<string>("Servicios");
+
+                    b.Property<double>("SubTotal");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FacturaDetalles");
+                });
+
+            modelBuilder.Entity("BeautyCenterCore.Models.Facturas", b =>
+                {
+                    b.Property<int>("FacturaId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ClienteId");
+
+                    b.Property<string>("Clientes");
+
+                    b.Property<string>("Empleados");
+
+                    b.Property<DateTime>("Fecha");
+
+                    b.Property<double>("Total");
+
+                    b.HasKey("FacturaId");
+
+                    b.ToTable("Facturas");
                 });
 
             modelBuilder.Entity("BeautyCenterCore.Models.Servicios", b =>

@@ -149,6 +149,8 @@ namespace BeautyCenterCore.Migrations
                     b.Property<int>("FacturaId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("ClienteId");
+
                     b.Property<string>("Clientes");
 
                     b.Property<string>("Empleados");

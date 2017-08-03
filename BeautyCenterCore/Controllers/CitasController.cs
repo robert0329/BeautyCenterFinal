@@ -6,22 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeautyCenterCore.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace BeautyCenterCore.Controllers
 {
-   // [Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
     public class CitasController : Controller
     {
         private readonly BeautyCoreDb _context;
-        List<Citas>joder = new List<Citas>();
 
-        [HttpGet]
-        public ActionResult Index()
+        public CitasController(BeautyCoreDb context)
         {
-            return View(BLL.CitasBLL.Listar());
+            _context = context;    
         }
-
         [HttpGet]
         public ActionResult Buscar(DateTime Desde, DateTime Hasta)
         {
@@ -29,16 +24,11 @@ namespace BeautyCenterCore.Controllers
 
             return Json(BLL.CitasBLL.GetListaFecha(Desde, Hasta));
         }
-        public CitasController(BeautyCoreDb context)
+        // GET: Citas
+        public IActionResult Index()
         {
-            _context = context;    
+            return View(BLL.CitasBLL.Listar());
         }
-
-        //// GET: Citas
-        //public IActionResult Index()
-        //{
-        //    return View(BLL.CitasBLL.Listar());
-        //}
 
         // GET: Citas/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -69,25 +59,26 @@ namespace BeautyCenterCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("CitaId,ClienteId,Nombres,ServicioId,Servicio,EmpleadoId,NombreE,Fecha")] Citas citas)
+        public async Task<IActionResult> Create([Bind("CitaId,ClienteId,Nombres,ServicioId,Servicio,EmpleadoId,NombreE,Fecha")] Citas citas)
         {
             if (ModelState.IsValid)
             {
-                BLL.CitasBLL.Guardar(citas);
+                _context.Add(citas);
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(citas);
         }
 
         // GET: Citas/Edit/5
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var citas = BLL.CitasBLL.Buscar(id);
+            var citas = await _context.Citas.SingleOrDefaultAsync(m => m.CitaId == id);
             if (citas == null)
             {
                 return NotFound();
@@ -131,14 +122,15 @@ namespace BeautyCenterCore.Controllers
         }
 
         // GET: Citas/Delete/5
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var citas = BLL.CitasBLL.Buscar(id);
+            var citas = await _context.Citas
+                .SingleOrDefaultAsync(m => m.CitaId == id);
             if (citas == null)
             {
                 return NotFound();
@@ -150,10 +142,11 @@ namespace BeautyCenterCore.Controllers
         // POST: Citas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var citas = BLL.CitasBLL.Buscarr(id);
-            BLL.CitasBLL.Eliminar(citas);
+            var citas = await _context.Citas.SingleOrDefaultAsync(m => m.CitaId == id);
+            _context.Citas.Remove(citas);
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 

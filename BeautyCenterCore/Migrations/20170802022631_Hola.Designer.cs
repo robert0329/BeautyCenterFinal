@@ -8,8 +8,8 @@ using BeautyCenterCore.Models;
 namespace BeautyCenterCore.Migrations
 {
     [DbContext(typeof(BeautyCoreDb))]
-    [Migration("20170721151635_hola")]
-    partial class hola
+    [Migration("20170802022631_Hola")]
+    partial class Hola
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -119,6 +119,50 @@ namespace BeautyCenterCore.Migrations
                     b.HasKey("EmpleadoId");
 
                     b.ToTable("Empleados");
+                });
+
+            modelBuilder.Entity("BeautyCenterCore.Models.FacturaDetalles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Cantidad");
+
+                    b.Property<double>("Descuento");
+
+                    b.Property<int>("FacturaId");
+
+                    b.Property<double>("Precio");
+
+                    b.Property<int>("ServicioId");
+
+                    b.Property<string>("Servicios");
+
+                    b.Property<double>("SubTotal");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FacturaDetalles");
+                });
+
+            modelBuilder.Entity("BeautyCenterCore.Models.Facturas", b =>
+                {
+                    b.Property<int>("FacturaId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ClienteId");
+
+                    b.Property<string>("Clientes");
+
+                    b.Property<string>("Empleados");
+
+                    b.Property<DateTime>("Fecha");
+
+                    b.Property<double>("Total");
+
+                    b.HasKey("FacturaId");
+
+                    b.ToTable("Facturas");
                 });
 
             modelBuilder.Entity("BeautyCenterCore.Models.Servicios", b =>

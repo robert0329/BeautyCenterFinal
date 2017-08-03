@@ -4,137 +4,68 @@
     ViewData["Title"] = "Index";
 }
 
-@using (Html.BeginForm(null, null, FormMethod.Get))
-{
-    <fieldset>
-        <legend>Criterios de busqueda</legend>
-        <div asp-validation-summary="All" class="text-danger"></div>
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon glyphicon glyphicon-calendar"> Desde:</span>
-                <input class="form-control input-group input" type="text" placeholder="Fecha" id="dpDesde" required readonly />
-            </div>
-        </div>
-        <div asp-validation-summary="All" class="text-danger"></div>
-        <div class="form-group">
-            <div class="input-group">
-                <span class="input-group-addon glyphicon glyphicon-calendar"> Hasta:</span>
-                <input class="form-control input-group input" type="text" placeholder="Fecha" id="dpHasta" required readonly />
-            </div>
-        </div>
-
-
-    </fieldset>
-    <button type="button" class="btn btn-success col-sm-2" id="btnCrear" onclick="Buscar()">Crear</button>
-}
+<h2>Index</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table" id="tDetalle">
+<table class="table">
     <thead>
         <tr>
-            <th>
-                ClienteId
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombres)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ServicioId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Servicio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EmpleadoId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NombreE)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Fecha)
-            </th>
-            <th> Opcion</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClienteId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombres)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ServicioId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Servicio)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EmpleadoId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NombreE)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha)
+                </th>
             <th></th>
         </tr>
     </thead>
-    <tbody id="tbBody">
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ClienteId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nombres)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ServicioId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Servicio)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EmpleadoId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NombreE)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Fecha)
-                </td>
-                <td> Opcion</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.ClienteId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.CitaId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.CitaId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody >
-</table>
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        <script src="~/js/bootstrap-datepicker.min.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
-        <script src="~/js/moment.min.js"></script>
-        <script src="~/js/moment-with-locales.min.js"></script>
-        <script src="~/js/jquery-3.1.1.min.js"></script>
-        <script src="~/js/jquery-ui.js"></script>
-        <script type="text/javascript">
-            $(document).off('.datepicker.data-api'); $('#dpDesde').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
-            $(document).off('.datepicker.data-api'); $('#dpHasta').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
-            
-
-            function Buscar() {
-                $('#tbBody tr').remove();
-                var Desde = $('#dpDesde').val();
-                var Hasta = $('#dpHasta').val();
-                $.getJSON("/Citas/Buscar",
-                    {
-                        Desde: Desde,
-                        Hasta: Hasta
-                    },
-                    function (lista) {
-                        $.each(lista, function (index, lista) {
-                            var fila = "<tr>";
-                            fila += "<td>" + lista.clienteId + "</td>";
-                            fila += "<td>" + lista.nombres + "</td>";
-                            fila += "<td>" + lista.servicioId + "</td>";
-                            fila += "<td>" + lista.servicio + "</td>";
-                            fila += "<td>" + lista.empleadoId + "</td>";
-                            fila += "<td>" + lista.nombreE + "</td>";
-                            fila += "<td>" + lista.fecha + "</td>";
-
-                            fila += "</tr>";
-
-                            $('#tDetalle tbody').append(fila);
-                            
-                        });
-                    });
-            }
-        </script>
-    }
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClienteId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombres)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServicioId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Servicio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmpleadoId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NombreE)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fecha)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.CitaId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CitaId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.CitaId">Delete</a>
+            </td>
+        </tr>
 }
+    </tbody>
+</table>

@@ -13,6 +13,12 @@
     <dl class="dl-horizontal">
         <input type="hidden" asp-for="FacturaId" />
         <dt>
+            @Html.DisplayNameFor(model => model.ClienteId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ClienteId)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Clientes)
         </dt>
         <dd>

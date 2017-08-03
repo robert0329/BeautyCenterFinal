@@ -66,14 +66,24 @@ namespace BeautyCenterCore.Controllers
             bool resultado = false;
             if (ModelState.IsValid)
             {
-               resultado = FacturasBLL.Guardar(nueva);
+                DateTime now = DateTime.Now;
+                int y, m, d, h, min, s;
+                y = nueva.Encabezado.Fecha.Year;
+                m = nueva.Encabezado.Fecha.Month;
+                d = nueva.Encabezado.Fecha.Day;
+                h = now.Hour;
+                min = now.Minute;
+                s = now.Second;
+                nueva.Encabezado.Fecha = new DateTime(y, m, d, h, min, s);
+                
+                resultado = FacturasBLL.Guardar(nueva);
             }
             return Json(resultado);
         }
         [HttpPost]
         public JsonResult GuardarDetalleFacturas([FromBody]List<FacturaDetalles> detalles)
         {
-            bool resultado = BLL.FacturaDetallesBLL.Insertar(detalles);
+            bool resultado = BLL.FacturaDetallesBLL.Guardar(detalles);
 
             return Json(resultado);
         }

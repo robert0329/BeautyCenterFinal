@@ -29,49 +29,8 @@ namespace BeautyCenterCore.BLL
                 }
             }
             return false;
-        }
-        public static bool Guardar(List<FacturaDetalles> detalles)
-        {
-            bool resultado = false;
-            using (var conexion = new BeautyCoreDb())
-            {
-                try
-                {
-                    foreach (FacturaDetalles detail in detalles)
-                    {
-                        resultado = Guardar(detail);
-                    }
-                }
-                catch (Exception)
-                {
-
-                    throw;
-                }
-            }
-            return resultado;
-        }
-        public static bool Insertar(List<FacturaDetalles> detalles)
-        {
-            bool resultado = false;
-            using (var db = new BeautyCoreDb())
-            {
-                try
-                {
-                    foreach (FacturaDetalles detail in detalles)
-                    {
-                        db.FacturaDetalles.Add(detail);
-                        db.SaveChanges();
-                        resultado = true;
-                    }
-                }
-                catch (Exception)
-                {
-
-                    throw;
-                }
-            }
-            return resultado;
-        }
+        }       
+        
         public static bool Modificar(FacturaDetalles detalle)
         {
             using (var conexion = new BeautyCoreDb())
@@ -86,6 +45,7 @@ namespace BeautyCenterCore.BLL
                     }
                     else
                     {
+                        return Guardar(detalle);
                     }
                 }
                 catch (Exception)
@@ -95,23 +55,6 @@ namespace BeautyCenterCore.BLL
                 }
             }
             return false;
-        }
-        public static bool Modificar(List<FacturaDetalles> detalles)
-        {
-            bool resultado = false;
-            try
-            {
-                foreach (FacturaDetalles detail in detalles)
-                {
-                    resultado = Modificar(detail);
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            return resultado;
         }
         public static FacturaDetalles Buscar(int nuevoId)
         {
@@ -139,7 +82,7 @@ namespace BeautyCenterCore.BLL
                 {
                     listado = conexion.FacturaDetalles.
                         Where(d => d.FacturaId == Id).
-                        OrderBy(d => d.FacturaId).ToList();
+                        OrderBy(d => d.Id).ToList();
                 }
                 catch (Exception)
                 {
@@ -165,24 +108,7 @@ namespace BeautyCenterCore.BLL
                 }
             }
             return false;
-        }
-        public static bool Eliminar(List<FacturaDetalles> detalles)
-        {
-            bool resultado = false;
-            try
-            {
-                foreach (var detail in detalles)
-                {
-                    resultado = Eliminar(detail);
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            return resultado;
-        }
+        }      
         public static List<FacturaDetalles> GetLista()
         {
             var lista = new List<FacturaDetalles>();
@@ -217,6 +143,86 @@ namespace BeautyCenterCore.BLL
                 }
             }
             return list;
+        }
+
+        public static bool Guardar(List<FacturaDetalles> detalles)
+        {
+            bool resultado = false;
+            using (var conexion = new BeautyCoreDb())
+            {
+                try
+                {
+                    foreach (FacturaDetalles detail in detalles)
+                    {
+                        conexion.FacturaDetalles.Add(detail);
+                        if (conexion.SaveChanges() > 0)
+                        {
+
+                            resultado = true;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return resultado;
+        }
+        public static bool Modificar(List<FacturaDetalles> detalles)
+        {
+            bool resultado = false;
+            using (var conexion = new BeautyCoreDb())
+            {
+                try
+                {
+                    foreach (FacturaDetalles detail in detalles)
+                    {
+                        if (Buscar(detail.Id) != null)
+                        {
+                            conexion.Entry(detail).State = EntityState.Modified;
+                            if (conexion.SaveChanges() > 0)
+                                resultado = true;
+                        }
+                        else
+                        {
+                            conexion.FacturaDetalles.Add(detail);
+                            if (conexion.SaveChanges() > 0)
+                            {
+                                resultado = true;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                return resultado;
+            }
+        }
+        public static bool Eliminar(List<FacturaDetalles> detalles)
+        {
+            bool resultado = false;
+            using (var conexion = new BeautyCoreDb())
+            {
+                try
+                {
+                    foreach (var detail in detalles)
+                    {
+                        conexion.Entry(detail).State = EntityState.Deleted;
+                        conexion.SaveChanges();
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                return resultado;
+            }          
         }
     }
 }

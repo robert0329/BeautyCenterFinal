@@ -65,7 +65,7 @@
             <input class="form-control input-group-sm col-2" type="text" id="tbCantidad" placeholder="Cantidad" />
             <span class="input-group-addon">Descuento   </span>
             <input class="form-control input-group-sm col-2" type="text" id="tbDescuento" placeholder="Descuento" />
-            <button type="button" class="btn btn-info col-sm-2" id="btnAgregar" onclick="AgregarDetalle()">Agregar</button>
+            <button type="button" class="btn btn-success col-sm-2" id="btnAgregar" onclick="AgregarDetalle()">Agregar</button>
         </div>
     </div>
 
@@ -125,7 +125,6 @@
 
             CargaDropDownList();
             var cont = 0, Contenido = new Array(), factId = 0;
-
             ///////////////Detalle/////////////////////
             function ActualizarTabla() {
                 if ($('#tbBody tr').length > 0)
@@ -245,8 +244,8 @@
                             var Nombre = lista.nombres;
                             var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
                             $('#ClienteList').append(option);
-                            $('#ClienteList').val($('#ServicioList > option:first').val());
                         });
+                        
                     });
                 $.getJSON("/CargaFacturas/ListaEmpleadosFacturas",
                     {
@@ -258,20 +257,24 @@
                             var Nombre = lista.nombres;
                             var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
                             $('#EmpleadoList').append(option);
+
                         });
                     });
             }
             function LimpiarCampos(modo) {
                 $('#ClienteList').find('option').remove();
                 $('#EmpleadoList').find('option').remove();
+                $('#ServicioList').find('option').remove();
                 CargaDropDownList();
-                $('#ClienteList').val($('#ServicioList > option:first').val());
-                $('#EmpleadoList').val($('#ServicioList > option:first').val());
+                $('#ClienteList').val($('#ClienteList > option:first').val());
+                $('#EmpleadoList').val($('#EmpleadoList > option:first').val());
                 $('#ServicioList').val($('#ServicioList > option:first').val());
                 $('#tbPrecio').val("");
                 $('#tbCantidad').val("");
                 $('#tbDescuento').val("");
                 $('#tbBody tr').remove();
+
+                
                 cont = 0;
                 $('#tbTotal').val(0);
                 $('#tbDescuento').val(0);
@@ -345,9 +348,9 @@
                         }
                     });
             };
-
             ///////////Metodos/////////////////////////////////////////
             function Buscar() {
+                Contenido.length = 0;
                 var id = $('#tbId').val();
                 $.getJSON("/CargaFacturas/Buscar",
                     { FacturaId: id }, function (fac) {
@@ -361,19 +364,20 @@
                     });
                 $.getJSON("/FacturaDetalles/BuscarF", { FacturaId: id }, function (customer) {
                     $.each(customer, function (index, customer) {
-                        var fila = '<tr> <td>' +
-                            cont++ + "<td>" + customer.servicioId + "</td>" +
-                            "<td>" + customer.servicios + "</td>" +
-                            "<td>" + customer.precio + "</td>" +
-                            "<td>" + customer.cantidad + "</td>" +
-                            "<td>" + customer.descuento + "</td>" +
-                            "<td>" + customer.subTotal + "</td>"
-                            + "<td>" + '<input type="button" value="Delete" onclick="deleteRow(this)"/>' + "</td>" +
-                            " </tr>";
-
-                        $('#tabla').append(fila);
+                        
+                        var pp = {
+                            Id:0,
+                            FacturaId: id,
+                            ServicioId: customer.servicioId,
+                            Servicios: customer.servicios,
+                            Precio: customer.precio,
+                            Cantidad: customer.cantidad,
+                            Descuento: customer.descuento,
+                            SubTotal: customer.subTotal
+                        }
+                        Contenido.push(pp);
+                        ActualizarTabla();
                     });
-                    ActualizarTabla();
                 });
             }
             function ArmarFactura(motivo) {
@@ -414,6 +418,7 @@
                     data: EncabezadoDetalle,
                     success: function (res) {
                         if (res != null) {
+                            Contenido.length = 0;
                             alert("La factura ha sido modificada.");
                             LimpiarCampos(0);
                         } else {
@@ -440,59 +445,7 @@
                     }
                 })
             }
-            /////////////////Sin uso//////////////////
-            function Agregar() {
-                var monto = $('#tbTotal').val();
-                var Precio = $('#ServicioList').find('option:selected').attr('value');
-
-                var atributos = $('#ServicioList').find('option:selected'); cont++;
-                var ServicioListId = $('#ServicioList').find('option:selected').attr('id');
-
-                var Cantidad = $('#tbCantidad').val();
-                var Descuento = $('#tbDescuento').val();
-                var cc = Precio * Cantidad;
-                var sub = cc - Descuento;
-                monto = parseFloat(sub) + parseFloat(monto);
-
-                var fila = '<tr> <td>' +
-                    cont + "<td>" + ServicioListId + "</td>" +
-                    "<td>" + atributos.text() + "</td>" +
-                    "<td>" + Precio + "</td>" +
-                    "<td>" + Cantidad + "</td>" +
-                    "<td>" + Descuento + "</td>" +
-                    "<td>" + sub + "</td>"
-                    + "<td>" + '<input type="button" value="Delete" onclick="deleteRow(this)"/>' + "</td>" +
-                    " </tr>";
-
-                $('#tabla').append(fila);
-                $('#tbTotal').val(monto);
-                $('#ServicioList').val($('#ServicioList > option:first').val());
-            }
-            function Detalle() {
-                $('#tbBody tr').each(function () {
-
-                    var Id = factId;
-                    var ServicioId = $(this).find('td').eq(1).html();
-                    var Servicio = $(this).find('td').eq(2).html();
-                    var Precio = $(this).find('td').eq(3).html();
-                    var Cantidad = $(this).find('td').eq(4).html();
-                    var Descuento = $(this).find('td').eq(5).html();
-                    var SubTotal = $(this).find('td').eq(6).html();
-                    Contenido =
-                        {
-                            Id: 0,
-                            FacturaId: 4,
-                            ServicioId: ServicioId,
-                            Servicios: Servicio,
-                            Precio: Precio,
-                            Cantidad: Cantidad,
-                            Descuento: Descuento,
-                            SubTotal: SubTotal
-                        }
-                    EnviarD(Contenido);
-                });
-            }
-
+            
         </script>
 
     }

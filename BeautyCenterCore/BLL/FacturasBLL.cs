@@ -99,8 +99,7 @@ namespace BeautyCenterCore.BLL
                     };
                     if (factura.Encabezado != null)
                     {
-                        factura.Detalle =
-                        BLL.FacturaDetallesBLL.Listar(factura.Encabezado.FacturaId);
+                        factura.Detalle =BLL.FacturaDetallesBLL.Listar(factura.Encabezado.FacturaId);
                     }
                     else
                     {
@@ -143,6 +142,8 @@ namespace BeautyCenterCore.BLL
             {
                 try
                 {
+                    factura = BLL.FacturasBLL.Buscarr(factura.Encabezado.FacturaId);
+                    BLL.FacturasBLL.Eliminar(factura.Encabezado);
                     BLL.FacturaDetallesBLL.Eliminar(factura.Detalle);
                     
                 }
@@ -154,7 +155,7 @@ namespace BeautyCenterCore.BLL
             }
             return resultado;
         }
-        public static bool Eliminarf(Facturas nuevo)
+        public static bool Eliminar(Facturas nuevo)
         {
             using (var conexion = new BeautyCoreDb())
             {

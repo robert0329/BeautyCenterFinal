@@ -225,6 +225,14 @@ namespace BeautyCenterCore.BLL
                         resultado = true;
 
                     }
+                    else
+                    {
+                        foreach (var d in detalles)
+                        {
+                            conexion.FacturaDetalles.Add(d);
+                            conexion.SaveChanges();
+                        }
+                    }
                 }
                 catch (Exception)
                 {

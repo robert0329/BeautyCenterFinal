@@ -269,7 +269,8 @@
                 var i = r.parentNode.parentNode.rowIndex;
                 document.getElementById("tabla").deleteRow(i);
                 $('#ServicioList').val($('#ServicioList > option:first').val());
-                Contenido.splice(i-1, 1);
+                Contenido.splice(i - 1, 1);
+                ActualizarTabla();
             }
             $(document).ready(function () {
                 NextId();
@@ -406,6 +407,8 @@
                     success: function (res) {
                         if (res != null) {
                             Contenido.length = 0;
+                            
+
                             alert("La factura ha sido modificada.");
                             LimpiarCampos(0);
                         } else {

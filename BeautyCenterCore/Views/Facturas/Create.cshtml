@@ -147,7 +147,8 @@
                 $('#tbTotal').val(monto);
             }
             function AgregarDetalle() {
-                
+
+                var Id = $('#tbId').val();
                 var ServicioId = $('#ServicioList').find('option:selected').attr('id');
                 var Servicio = $('#ServicioList').find('option:selected');
                 var Precio = $('#tbPrecio').val();
@@ -156,7 +157,7 @@
                 var subTt = (parseInt(Cantidad) * parseFloat(Precio) - parseFloat(Descuento));
                 var detail = {
                     Id: 0,
-                    FacturaId: Next,
+                    FacturaId: Id,
                     ServicioId: ServicioId,
                     Servicios: Servicio.text(),
                     Precio: Precio,
@@ -165,6 +166,7 @@
                     SubTotal: subTt
                 }
                 Contenido.push(detail);
+                console.log(Contenido);
                 ActualizarTabla();
             }
             ///////////Validaciones//////////////////////////////////
@@ -268,16 +270,14 @@
                 var i = r.parentNode.parentNode.rowIndex;
                 document.getElementById("tabla").deleteRow(i);
                 $('#ServicioList').val($('#ServicioList > option:first').val());
-                ActualizarTabla();
+                Contenido.splice(i-1, 1);
             }
             $(document).ready(function () {
                 NextId();
             });
-            var Next = 0;
             function NextId() {
                 $.getJSON("/Facturas/LastIndex", function (id) {
                     $('#tbId').val(id);
-                    Next = id;
                 });
             }
             //////////Guardar Factura/////////////////////////////////
@@ -369,6 +369,7 @@
                     });  
             }
             function ArmarFactura(motivo) {
+                var Id = $('#tbId').val();
                 var ClienteListId = $('#ClienteList').find('option:selected').attr('id');
                 var ClienteList = $('#ClienteList').find('option:selected');
                 var EmpleadoList = $('#EmpleadoList').find('option:selected');
@@ -377,7 +378,7 @@
                 var fecha = $('#dpFecha').val();
 
                 var enca = {
-                    FacturaId: Next,
+                    FacturaId: Id,
                     ClienteId: ClienteListId,
                     Clientes: ClienteList.text(),
                     Empleados: EmpleadoList.text(),

@@ -14,7 +14,7 @@ namespace BeautyCenterCore.BLL
         {
             int identity = 0;
             string con =
-            @"Server=tcp:personasserver.database.windows.net,1433;Initial Catalog=BaseDatos;Persist Security Info=False;User ID=dante0329;Password=Onepiece29;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            @"Data Source=ROBERT\SERVIDORES;Initial Catalog=Db;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             using (SqlConnection conexion = new SqlConnection(con))
             {
                 try

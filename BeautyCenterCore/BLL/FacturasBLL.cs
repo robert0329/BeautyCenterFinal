@@ -122,6 +122,7 @@ namespace BeautyCenterCore.BLL
                 try
                 {
                     conexion.Entry(factura.Encabezado).State = EntityState.Modified;
+
                     if (conexion.SaveChanges() > 0)
                     {
                         resultado = BLL.FacturaDetallesBLL.Modificar(factura.Detalle);

@@ -125,7 +125,7 @@ namespace BeautyCenterCore.BLL
 
                     if (conexion.SaveChanges() > 0)
                     {
-                        resultado = BLL.FacturaDetallesBLL.Modificar(factura.Detalle);
+                        resultado = BLL.FacturaDetallesBLL.Modificar(factura.Detalle, factura.Encabezado.FacturaId);
                     }
                 }
                 catch (Exception)

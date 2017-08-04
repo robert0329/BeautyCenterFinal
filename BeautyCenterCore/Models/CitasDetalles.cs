@@ -16,8 +16,7 @@ namespace BeautyCenterCore.Models
         public int ClienteId { get; set; }
 
         public int ServicioId { get; set; }
-
-        public int EmpleadoId { get; set; }
+        public string Servicio { get; set; }
     }
 }
     

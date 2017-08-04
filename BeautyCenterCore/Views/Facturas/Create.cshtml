@@ -165,27 +165,9 @@
                     Descuento: Descuento,
                     SubTotal: subTt
                 }
-
                 Contenido.push(detail);
+                console.log(Contenido);
                 ActualizarTabla();
-            }
-            function EnviarD(detail) {
-                var pack = JSON.stringify(detail);
-                $.ajax(
-                    {
-                        type: "POST",
-                        url: "/CargaFacturas/GuardarDetalleFacturas",
-                        data: pack,
-                        contentType: "application/json",
-                        success: function (data) {
-                            if (!data) {
-                                alert("No se guardo el detalle");
-                            }
-                            else {
-                                updateTips("Peticion realizada con exito!!");
-                            }
-                        }
-                    });
             }
             ///////////Validaciones//////////////////////////////////
             var CLIENTE = $('#ClienteList').find('option:selected'), SERVICIO = $('#ServicioList').find('option:selected'), EMPLEADOS = $('#EmpleadoList').find('option:selected'), FECHA = $("#dpFecha"), CANTIDAD = $("#dpCantidad"), allFields = $([]).add(CLIENTE).add(FECHA), tips = $(".validateTips");
@@ -350,35 +332,40 @@
             };
             ///////////Metodos/////////////////////////////////////////
             function Buscar() {
-                Contenido.length = 0;
-                var id = $('#tbId').val();
-                $.getJSON("/CargaFacturas/Buscar",
-                    { FacturaId: id }, function (fac) {
-                        $('#dpFecha').val(fac.fecha);
-                        $('#ClienteList').find('option').remove();
-                        $('#EmpleadoList').find('option').remove();
-                        var option = "<option id='" + fac.clienteId + "'value='" + 1 + "'>" + fac.clientes + "</option>";
-                        $('#ClienteList').append(option);
-                        var optionE = "<option id='" + 1 + "'value='" + 1 + "'>" + fac.empleados + "</option>";
-                        $('#EmpleadoList').append(optionE);
-                    });
-                $.getJSON("/FacturaDetalles/BuscarF", { FacturaId: id }, function (customer) {
-                    $.each(customer, function (index, customer) {
-                        
-                        var pp = {
-                            Id:0,
-                            FacturaId: id,
-                            ServicioId: customer.servicioId,
-                            Servicios: customer.servicios,
-                            Precio: customer.precio,
-                            Cantidad: customer.cantidad,
-                            Descuento: customer.descuento,
-                            SubTotal: customer.subTotal
+                Contenido.length = 0;var id = $('#tbId').val();
+                $.getJSON("/CargaFacturas/Buscar",{ FacturaId: id }, function (fac) {
+                        if (fac != null) {
+                            $('#dpFecha').val(fac.fecha);
+                            $('#ClienteList').find('option').remove();
+                            $('#EmpleadoList').find('option').remove();
+                            var option = "<option id='" + fac.clienteId + "'value='" + 1 + "'>" + fac.clientes + "</option>";
+                            $('#ClienteList').append(option);
+                            var optionE = "<option id='" + 1 + "'value='" + 1 + "'>" + fac.empleados + "</option>";
+                            $('#EmpleadoList').append(optionE);                      
+
+                            $.getJSON("/FacturaDetalles/BuscarF", { FacturaId: id }, function (customer) {
+                                $.each(customer, function (index, customer) {
+
+                                    var pp = {
+                                        Id: customer.id,
+                                        FacturaId: id,
+                                        ServicioId: customer.servicioId,
+                                        Servicios: customer.servicios,
+                                        Precio: customer.precio,
+                                        Cantidad: customer.cantidad,
+                                        Descuento: customer.descuento,
+                                        SubTotal: customer.subTotal
+                                    }
+                                    Contenido.push(pp);
+                                    ActualizarTabla();
+                                });
+                            });
                         }
-                        Contenido.push(pp);
-                        ActualizarTabla();
-                    });
-                });
+                        else if(fac== null){
+                            alert("La factura que ha solicitado al parecer no esta disponible o ha sido eliminada");
+
+                        }
+                    });  
             }
             function ArmarFactura(motivo) {
                 var Id = $('#tbId').val();

@@ -23,17 +23,9 @@ namespace BeautyCenterCore.Migrations
 
                     b.Property<int>("ClienteId");
 
-                    b.Property<int>("EmpleadoId");
-
                     b.Property<DateTime>("Fecha");
 
-                    b.Property<string>("NombreE");
-
                     b.Property<string>("Nombres");
-
-                    b.Property<string>("Servicio");
-
-                    b.Property<int>("ServicioId");
 
                     b.HasKey("CitaId");
 
@@ -49,7 +41,7 @@ namespace BeautyCenterCore.Migrations
 
                     b.Property<int>("ClienteId");
 
-                    b.Property<int>("EmpleadoId");
+                    b.Property<string>("Servicio");
 
                     b.Property<int>("ServicioId");
 

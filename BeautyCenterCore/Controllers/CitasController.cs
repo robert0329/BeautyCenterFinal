@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeautyCenterCore.Models;
+using BeautyCenterCore.BLL;
 
 namespace BeautyCenterCore.Controllers
 {
@@ -17,13 +18,7 @@ namespace BeautyCenterCore.Controllers
         {
             _context = context;    
         }
-        [HttpGet]
-        public ActionResult Buscar(DateTime Desde, DateTime Hasta)
-        {
-            BLL.CitasBLL.GetListaFecha(Desde, Hasta);
-
-            return Json(BLL.CitasBLL.GetListaFecha(Desde, Hasta));
-        }
+        
         // GET: Citas
         public IActionResult Index()
         {
@@ -153,6 +148,78 @@ namespace BeautyCenterCore.Controllers
         private bool CitasExists(int id)
         {
             return _context.Citas.Any(e => e.CitaId == id);
+        }
+        public JsonResult Guardar(ClasesC nueva)
+        {
+            bool resultado = false;
+            if (ModelState.IsValid)
+            {
+                resultado = CitasBLL.Guardar(nueva);
+            }
+            return Json(resultado);
+        }
+        [HttpGet]
+        public JsonResult ListaServicios(int id)
+        {
+            var listado = BLL.ServiciosBLL.Listar();
+
+            return Json(listado);
+        }
+        [HttpGet]
+        public JsonResult ListaClientes(int id)
+        {
+            var listado = BLL.ClientesBLL.Listar();
+
+            return Json(listado);
+        }
+        public JsonResult Modificar(ClasesC nuevo)
+        {
+            var existe = (BLL.CitasBLL.Buscarr(nuevo.Encabezado.CitaId) != null);
+            if (existe)
+            {
+                existe = BLL.CitasBLL.Modificar(nuevo);
+                return Json(existe);
+            }
+            else
+            {
+                return Json(null);
+            }
+        }
+        [HttpGet]
+        public JsonResult LastIndex()
+        {
+            int id = BLL.CitasBLL.Identity();
+            if (id > 1 || BLL.CitasBLL.Listar().Count > 0)
+                ++id;
+            return Json(id);
+        }
+        [HttpPost]
+        public JsonResult Eliminar(ClasesC nuevo)
+        {
+            var existe = (BLL.CitasBLL.BuscarEncabezado(nuevo.Encabezado.CitaId) != null);
+
+            if (existe)
+            {
+                existe = BLL.CitasBLL.Eliminar(nuevo);
+                return Json(existe);
+            }
+            else
+            {
+                return Json(null);
+            }
+        }
+        [HttpGet]
+        public ActionResult Buscar(int Id)
+        {
+            Citas var = BLL.CitasBLL.Buscar(Id);
+
+            return Json(var);
+        }
+        [HttpGet]
+        public JsonResult BuscarD(int Id)
+        {
+            var nuevo = BLL.DetalleCitasBLL.Listar(Id);
+            return Json(nuevo);
         }
     }
 }

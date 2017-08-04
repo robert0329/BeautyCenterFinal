@@ -15,8 +15,8 @@ namespace BeautyCenterCore.Models
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //"Server=tcp:otroproyecto.database.windows.net,1433;Initial Catalog=BeautyCoreDb;Persist Security Info=False;User ID=yinetjc;Password=C@sa9797;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-            optionsBuilder.UseSqlServer("Server=tcp:proyecto-finalaplicada2.database.windows.net,1433;Initial Catalog=EventosDB;Persist Security Info=False;User ID=luistejada;Password=Vakero0.23;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            
+            optionsBuilder.UseSqlServer("Server=tcp:personasserver.database.windows.net,1433;Initial Catalog=BaseDatos;Persist Security Info=False;User ID=dante0329;Password=Onepiece29;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
 
         public DbSet<BeautyCenterCore.Models.Citas> Citas { get; set; }

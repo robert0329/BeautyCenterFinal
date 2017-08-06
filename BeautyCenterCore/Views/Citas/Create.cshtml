@@ -52,6 +52,7 @@
                         <th>#</th>
                         <th>ServicioId</th>
                         <th>Servicio</th>
+                        <th>Precio</th>
                         <th>Opcion</th>
                     </tr>
                 </thead>
@@ -121,7 +122,6 @@
                         }
                     });
             };
-
             function ActualizarTabla() {
                 if ($('#tbBody tr').length > 0)
                     $('#tbBody tr').remove();
@@ -131,6 +131,7 @@
                     fila += '<td>' + (index + 1) + '</td>';
                     fila += '<td>' + detail.ServicioId + '</td>';
                     fila += '<td>' + detail.Servicio + '</td>';
+                    fila += '<td>' + detail.Precio + '</td>';
                     fila += '<td>' + '<input type="button" value="Delete" onclick="deleteRow(this)"/>' + '</td>';
                     fila += '</tr>';
                     $('#tabla').append(fila);
@@ -141,17 +142,18 @@
                 var ServicioId = $('#ServicioList').find('option:selected').attr('id');
                 var ClienteId = $('#ClienteList').find('option:selected').attr('id');
                 var Servicio = $('#ServicioList').find('option:selected');
+                var pre = $('#ServicioList').find('option:selected').attr('value');
                 var detail = {
                     Id: 0,
                     CitaId: Id,
                     ClienteId:ClienteId,
                     ServicioId: ServicioId,
-                    Servicio:Servicio.text()
+                    Servicio: Servicio.text(),
+                    Precio: pre
                 }
                 Contenido.push(detail);
                 ActualizarTabla();
-            }
-           
+            }          
             function Buscar() {
                 Contenido.length = 0;
                 var id = $('#tbId').val();
@@ -170,7 +172,8 @@
                                     CitaId: id,
                                     ServicioId: customer.servicioId,
                                     Servicio: customer.servicio,
-                                    ClienteId: customer.clienteId
+                                    ClienteId: customer.clienteId,
+                                    Precio: customer.precio
                                 }
                                 Contenido.push(pp);
                                 ActualizarTabla();
@@ -288,6 +291,13 @@
             $(document).ready(function () {
                 NextId();
             });
+            function deleteRow(r) {
+                var i = r.parentNode.parentNode.rowIndex;
+                document.getElementById("tabla").deleteRow(i);
+                $('#ServicioList').val($('#ServicioList > option:first').val());
+                Contenido.splice(i - 1, 1);
+                ActualizarTabla();
+            }
         </script>
     }
 }

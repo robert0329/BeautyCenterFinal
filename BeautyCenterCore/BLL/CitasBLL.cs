@@ -14,7 +14,7 @@ namespace BeautyCenterCore.BLL
         {
             int identity = 0;
             string con =
-            @"Data Source=ROBERT\SERVIDORES;Initial Catalog=Db;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            @"Server=tcp:personasserver.database.windows.net,1433;Initial Catalog=BaseDatos;Persist Security Info=False;User ID=dante0329;Password=Onepiece29;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             using (SqlConnection conexion = new SqlConnection(con))
             {
                 try
@@ -124,7 +124,7 @@ namespace BeautyCenterCore.BLL
                     conexion.Entry(nuevo.Encabezado).State = EntityState.Modified;
                     if (conexion.SaveChanges() > 0)
                     {
-                        resultado = BLL.DetalleCitasBLL.Modificar(nuevo.Detalle);
+                        resultado = BLL.DetalleCitasBLL.Modificar(nuevo.Detalle,nuevo.Encabezado.CitaId);
                     }
                 }
                 catch (Exception)
@@ -236,6 +236,23 @@ namespace BeautyCenterCore.BLL
             }
             return false;
         }
+        public static List<CitasDetalles> ListarId(int Id)
+        {
+            List<CitasDetalles> list = new List<CitasDetalles>();
+            using (var db = new BeautyCoreDb())
+            {
+                try
+                {
+                    list = db.CitasDetalles.Where(p => p.ClienteId == Id).ToList();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return list;
+        }
         public static List<Citas> GetListaFecha(DateTime D, DateTime H)
         {
             List<Citas> lista = new List<Citas>();
@@ -251,11 +268,7 @@ namespace BeautyCenterCore.BLL
                     throw;
                 }
             }
-
-
-
             return lista;
-
         }
     }
 }

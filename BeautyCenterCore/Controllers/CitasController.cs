@@ -221,5 +221,10 @@ namespace BeautyCenterCore.Controllers
             var nuevo = BLL.DetalleCitasBLL.Listar(Id);
             return Json(nuevo);
         }
+        [HttpGet]
+        public ActionResult BuscarFecha(DateTime Desde, DateTime Hasta)
+        {
+            return Json(BLL.CitasBLL.GetListaFecha(Desde, Hasta));
+        }
     }
 }

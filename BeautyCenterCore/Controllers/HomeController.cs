@@ -17,7 +17,6 @@ namespace BeautyCenterCore.Controllers
         {
             _context = context;
         }
-
         public IActionResult Index()
         {
             return View(_context.Usuarios.ToList());

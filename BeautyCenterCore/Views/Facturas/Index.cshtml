@@ -22,73 +22,63 @@
         </div>
     </div>
 </p>
-<table class="table" id="tabla" data-content="">
-    <thead>
-        <tr>
-            <th>
-                ClienteId
-            </th>
-            <th>
-                Clientes
-            </th>
-            <th>
-                Fecha
-            </th>
-            <th>
-                Total
-            </th>
-            <th>
-                Empleado
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-
-    <tbody id="tbBody">
-        @foreach (var item in Model)
-        {
+<div id="HTMLtoPDF">
+    <table id="tabla" class="table table-bordered">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ClienteId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Clientes)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Fecha)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Total)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Empleados)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.FacturaId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.FacturaId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.FacturaId">Delete</a>
-                </td>
+                <th>Clientes</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Empleados</th>
             </tr>
-        }
-    </tbody>
-
-</table>
+        </thead>
+        <tbody id="tbBody"></tbody>
+    </table>
+</div>
+<a href="#" onclick="HTMLtoPDF()">Descargar reporte PDF</a>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        <script src="~/js/bootstrap-datepicker.min.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
-        <script src="~/js/moment.min.js"></script>
-        <script src="~/js/moment-with-locales.min.js"></script>
         <script src="~/js/jquery-3.1.1.min.js"></script>
-        <script src="~/js/jquery-ui.js"></script>
+        <script src="~/js/jspdf.js"></script>
         <script type="text/javascript">
+
+            function HTMLtoPDF() {
+                if (cont >= 1) {
+                    var pdf = new jsPDF('p', 'pt', 'letter');
+                    source = $('#HTMLtoPDF')[0];
+                    specialElementHandlers = {
+                        '#bypassme': function (element, renderer) {
+                            return true
+                        }
+                    }
+                    margins = {
+                        top: 1,
+                        left: 100,
+                        width: 100
+                    };
+                    pdf.fromHTML(
+                        source
+                        , margins.left
+                        , margins.top
+                        , {
+                            'width': margins.width
+                            , 'elementHandlers': specialElementHandlers
+                        },
+                        function (dispose) {
+                            pdf.save('ReportCitas.pdf');
+                        }
+                    )
+                }
+                else { alert("No se puede realizar el reporte"); }
+            }
+
+            var cont;
             $('#tbFiltro').val($('#ServicioList > option:first').val());
             $("#tbId").attr('disabled', 'disabled');
 
             $("#tbFiltro").change(function () {
                 if ($("#tbFiltro").val() == 1) {
-                    $("#tbId").removeAttr("disabled"); 
+                    $("#tbId").removeAttr("disabled");
                 }
                 else {
                     $('#tbId').val("");
@@ -97,32 +87,33 @@
             });
             function Buscar() {
                 $('#tbBody tr').remove();
+                cont = 0;
                 var filtro = $('#tbFiltro').find('option:selected').attr('value');
                 var Id = $('#tbId').val();
                 if (filtro == 1) {
                     $.getJSON("/CargaFacturas/Buscar",
                         { FacturaId: Id }, function (lista) {
-                            var fila = "<tr>";
-                            fila += "<td>" + lista.clienteId + "</td>";
-                            fila += "<td>" + lista.clientes + "</td>";
-                            fila += "<td>" + lista.fecha + "</td>";
-                            fila += "<td>" + lista.total + "</td>";
-                            fila += "<td>" + lista.empleados + "</td>";
-                            fila += "</tr>";
+                            var fila = "<tr>"
+                                + "<td>" + lista.clientes + "</td>"
+                                + "<td>" + lista.fecha + "</td>"
+                                + "<td>" + lista.total + "</td>"
+                                + "<td>" + lista.empleados + "</td>"
+                                + "</tr>";
                             $('#tabla tbody').append(fila);
+                            cont++;
                         });
                 } else {
                     $.getJSON("/CargaFacturas/BuscarF",
                         { FacturaId: 0 }, function (lista) {
                             $.each(lista, function (index, lista) {
-                                var fila = "<tr>";
-                                fila += "<td>" + lista.clienteId + "</td>";
-                                fila += "<td>" + lista.clientes + "</td>";
-                                fila += "<td>" + lista.fecha + "</td>";
-                                fila += "<td>" + lista.total + "</td>";
-                                fila += "<td>" + lista.empleados + "</td>";
-                                fila += "</tr>";
+                                var fila = "<tr>"
+                                    + "<td>" + lista.clientes + "</td>"
+                                    + "<td>" + lista.fecha + "</td>"
+                                    + "<td>" + lista.total + "</td>"
+                                    + "<td>" + lista.empleados + "</td>"
+                                    + "</tr>";
                                 $('#tabla tbody').append(fila);
+                                cont++;
                             });
                         });
                 }

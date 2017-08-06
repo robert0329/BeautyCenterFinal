@@ -3,49 +3,110 @@
 @{
     ViewData["Title"] = "Index";
 }
+<h2>Citas</h2>
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
 
-<h2>Index</h2>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.ClienteId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Nombres)
-                </th>
-                
-               
-                <th>
-                    @Html.DisplayNameFor(model => model.Fecha)
-                </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClienteId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombres)
-            </td>
-            
-            
-            <td>
-                @Html.DisplayFor(modelItem => item.Fecha)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CitaId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CitaId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CitaId">Delete</a>
-            </td>
-        </tr>
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <fieldset>
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon glyphicon glyphicon-calendar"> Desde:</span>
+                <input class="form-control input-group input" type="text" placeholder="Desde" id="dpDesde" required readonly />
+                <span class="input-group-addon glyphicon glyphicon-calendar"> Hasta:</span>
+                <input class="form-control input-group input" type="text" placeholder="Hasta" id="dpHasta" required readonly />
+                <button type="button" class="btn btn-success col-sm-2" id="btnCrear" onclick="Buscar()">Buscar</button>
+            </div>
+        </div>
+    </fieldset>
 }
-    </tbody>
-</table>
+<div id="HTMLtoPDF">
+    <table class="table" id="tDetalle">
+
+        <thead>
+            <tr>
+                <th>CitaId</th>
+                <th>ClienteId</th>
+                <th>Nombres</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody id="tbBody"></tbody>
+    </table>
+</div>
+<a href="#" onclick="HTMLtoPDF()">Descargar reporte PDF</a>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="~/js/bootstrap-datepicker.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
+        <script src="~/js/jquery-3.1.1.min.js"></script>
+        <script src="~/js/jquery-ui.js"></script>
+        <script src="~/js/jspdf.js"></script>
+
+        <script type="text/javascript">
+            $(document).off('.datepicker.data-api'); $('#dpDesde').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
+            $(document).off('.datepicker.data-api'); $('#dpHasta').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
+
+
+            
+            function HTMLtoPDF() {
+                if (cont >= 1) {
+                    var pdf = new jsPDF('p', 'pt', 'letter');
+                    source = $('#HTMLtoPDF')[0];
+                    specialElementHandlers = {
+                        '#bypassme': function (element, renderer) {
+                            return true
+                        }
+                    }
+                    margins = {
+                        top: 1,
+                        left: 100,
+                        width: 100
+                    };
+                    pdf.fromHTML(
+                        source
+                        , margins.left
+                        , margins.top
+                        , {
+                            'width': margins.width
+                            , 'elementHandlers': specialElementHandlers
+                        },
+                        function (dispose) {
+                            pdf.save('ReportCitas.pdf');
+                        }
+                    )
+                }
+                else { alert("No se puede realizar el reporte"); }
+            } 
+            
+            var cont;
+            function Buscar() {
+                cont = 0;
+                $('#tbBody tr').remove();
+                var Desde = $('#dpDesde').val();
+                var Hasta = $('#dpHasta').val();
+                $.getJSON("/Citas/BuscarFecha",
+                    {
+                        Desde: Desde,
+                        Hasta: Hasta
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var fila = "<tr>"
+                                + "<td>" + lista.citaId + "</td>"
+                                + "<td>" + lista.clienteId + "</td>"
+                                + "<td>" + lista.nombres + "</td>"
+                                + "<td>" + lista.fecha + "</td>"
+                                + "</tr>";
+                            $('#tDetalle tbody').append(fila);
+                            cont++;
+                        });
+                    });
+            }
+        </script>
+    }
+}

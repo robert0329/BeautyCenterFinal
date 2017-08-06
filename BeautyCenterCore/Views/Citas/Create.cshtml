@@ -6,7 +6,6 @@
 
 <h2>Citas</h2>
 
-
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -150,8 +149,7 @@
                 }
                 Contenido.push(detail);
                 ActualizarTabla();
-            }
-           
+            }          
             function Buscar() {
                 Contenido.length = 0;
                 var id = $('#tbId').val();

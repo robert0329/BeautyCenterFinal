@@ -10,7 +10,6 @@ namespace BeautyCenterCore.BLL
 {
     public class CitasBLL
     {
-        
         public static bool Guardar(ClasesC nuevo)
         {
             bool resultado = false;
@@ -32,6 +31,7 @@ namespace BeautyCenterCore.BLL
             }
             return resultado;
         }
+
         public static Citas BuscarEncabezado(int? Id)
         {
             Citas nuevo = null;
@@ -49,6 +49,7 @@ namespace BeautyCenterCore.BLL
             }
             return nuevo;
         }
+
         public static int Identity()
         {
             int identity = 0;
@@ -70,6 +71,7 @@ namespace BeautyCenterCore.BLL
             }
             return identity;
         }
+
         public static Citas Buscar(int nuevoId)
         {
             Citas ID = null;
@@ -87,6 +89,7 @@ namespace BeautyCenterCore.BLL
             }
             return ID;
         }
+
         public static ClasesC Buscarr(int? Id)
         {
             ClasesC nuevo = null;

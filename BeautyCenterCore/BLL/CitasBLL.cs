@@ -10,27 +10,7 @@ namespace BeautyCenterCore.BLL
 {
     public class CitasBLL
     {
-        public static int Identity()
-        {
-            int identity = 0;
-            string con =
-            @"Server=tcp:personasserver.database.windows.net,1433;Initial Catalog=BaseDatos;Persist Security Info=False;User ID=dante0329;Password=Onepiece29;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-            using (SqlConnection conexion = new SqlConnection(con))
-            {
-                try
-                {
-                    conexion.Open();
-                    SqlCommand comando = new SqlCommand("SELECT IDENT_CURRENT('Citas')", conexion);
-                    identity = Convert.ToInt32(comando.ExecuteScalar());
-                    conexion.Close();
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-            return identity;
-        }
+        
         public static bool Guardar(ClasesC nuevo)
         {
             bool resultado = false;
@@ -68,6 +48,27 @@ namespace BeautyCenterCore.BLL
                 }
             }
             return nuevo;
+        }
+        public static int Identity()
+        {
+            int identity = 0;
+            string con =
+            @"Server=tcp:personasserver.database.windows.net,1433;Initial Catalog=BaseDatos;Persist Security Info=False;User ID=dante0329;Password=Onepiece29;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            using (SqlConnection conexion = new SqlConnection(con))
+            {
+                try
+                {
+                    conexion.Open();
+                    SqlCommand comando = new SqlCommand("SELECT IDENT_CURRENT('Citas')", conexion);
+                    identity = Convert.ToInt32(comando.ExecuteScalar());
+                    conexion.Close();
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+            return identity;
         }
         public static Citas Buscar(int nuevoId)
         {

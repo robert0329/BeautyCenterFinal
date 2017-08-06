@@ -30,7 +30,6 @@ namespace BeautyCenterCore.BLL
             }
             return false;
         }
-
         public static bool Modificar(FacturaDetalles detalle)
         {
             using (var conexion = new BeautyCoreDb())

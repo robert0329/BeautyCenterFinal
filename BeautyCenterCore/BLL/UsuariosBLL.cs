@@ -101,7 +101,6 @@ namespace BeautyCenterCore.BLL
             }
             return listado;
         }
-
         public static bool Eliminar(int? usuarioId)
         {
             try

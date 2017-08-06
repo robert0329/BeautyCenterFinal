@@ -237,6 +237,25 @@ namespace BeautyCenterCore.BLL
             }
             return false;
         }
+        public static List<CitasDetalles> Listar(int? Id)
+        {
+            List<CitasDetalles> listado = null;
+            using (var conexion = new BeautyCoreDb())
+            {
+                try
+                {
+                    listado = conexion.CitasDetalles.
+                        Where(d => d.ClienteId == Id).
+                        OrderBy(d => d.Servicio).ToList();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return listado;
+        }
         public static List<CitasDetalles> ListarId(int Id)
         {
             List<CitasDetalles> list = new List<CitasDetalles>();

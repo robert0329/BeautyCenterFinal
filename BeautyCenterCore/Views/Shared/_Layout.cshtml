@@ -33,11 +33,7 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="divider"></li>
-                    <li><a asp-area="" asp-controller="Facturas" asp-action="Create">Facturas</a></li>
-
-                    <li class="divider"></li>
-                    <li><a asp-area="" asp-controller="Citas" asp-action="Create">Citas</a></li>
+                    
 
                     @if (Context.Session.GetString("UsuarioId") != null)
                     {

@@ -65,7 +65,7 @@
                             , 'elementHandlers': specialElementHandlers
                         },
                         function (dispose) {
-                            pdf.save('ReportCitas.pdf');
+                            pdf.save('ReporteFacturas.pdf');
                         }
                     )
                 }
@@ -91,7 +91,7 @@
                 var filtro = $('#tbFiltro').find('option:selected').attr('value');
                 var Id = $('#tbId').val();
                 if (filtro == 1) {
-                    $.getJSON("/CargaFacturas/Buscar",
+                    $.getJSON("/Facturas/Buscar",
                         { FacturaId: Id }, function (lista) {
                             var fila = "<tr>"
                                 + "<td>" + lista.clientes + "</td>"
@@ -103,7 +103,7 @@
                             cont++;
                         });
                 } else {
-                    $.getJSON("/CargaFacturas/BuscarF",
+                    $.getJSON("/Facturas/BuscarF",
                         { FacturaId: 0 }, function (lista) {
                             $.each(lista, function (index, lista) {
                                 var fila = "<tr>"

@@ -88,23 +88,26 @@
             $(document).off('.datepicker.data-api'); $('#dpFecha').datepicker({ format: 'dd/mm/yyyy', autoclose: true });
             var Contenido = new Array(); CargaDropDownList();
             function Crear() {
-                var ClienteListId = $('#ClienteList').find('option:selected').attr('id');
-                var ClienteList = $('#ClienteList').find('option:selected');
 
-                var Id = $('#tbId').val();
-                var fecha = $('#dpFecha').val();
 
-                var nueva = {
-                    CitaId: 0,
-                    ClienteId: ClienteListId,
-                    Nombres: ClienteList.text(),
-                    Fecha: fecha
-                }
-                var EncabezadoDetalle = {
-                    Encabezado: nueva,
-                    Detalle: Contenido
-                }
-                Enviar(EncabezadoDetalle);
+                    var ClienteListId = $('#ClienteList').find('option:selected').attr('id');
+                    var ClienteList = $('#ClienteList').find('option:selected');
+
+                    var Id = $('#tbId').val();
+                    var fecha = $('#dpFecha').val();
+
+                    var nueva = {
+                        CitaId: 0,
+                        ClienteId: ClienteListId,
+                        Nombres: ClienteList.text(),
+                        Fecha: fecha
+                    }
+                    var EncabezadoDetalle = {
+                        Encabezado: nueva,
+                        Detalle: Contenido
+                    }
+                    Enviar(EncabezadoDetalle);
+            
             }
             function Enviar(data) {
                 $.ajax(
@@ -138,20 +141,22 @@
             }
             function AgregarDetalle() {
                 var Id = $('#tbId').val();
-                var ServicioId = $('#ServicioList').find('option:selected').attr('id');
-                var ClienteId = $('#ClienteList').find('option:selected').attr('id');
-                var Servicio = $('#ServicioList').find('option:selected');
-                var pre = $('#ServicioList').find('option:selected').attr('value');
-                var detail = {
-                    Id: 0,
-                    CitaId: Id,
-                    ClienteId:ClienteId,
-                    ServicioId: ServicioId,
-                    Servicio: Servicio.text(),
-                    Precio: pre
-                }
-                Contenido.push(detail);
-                ActualizarTabla();
+ 
+                    var ServicioId = $('#ServicioList').find('option:selected').attr('id');
+                    var ClienteId = $('#ClienteList').find('option:selected').attr('id');
+                    var Servicio = $('#ServicioList').find('option:selected');
+                    var pre = $('#ServicioList').find('option:selected').attr('value');
+                    var detail = {
+                        Id: 0,
+                        CitaId: Id,
+                        ClienteId: ClienteId,
+                        ServicioId: ServicioId,
+                        Servicio: Servicio.text(),
+                        Precio: pre
+                    }
+                    Contenido.push(detail);
+                    ActualizarTabla();
+                
             }          
             function Buscar() {
 

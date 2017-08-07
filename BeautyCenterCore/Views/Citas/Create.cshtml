@@ -89,25 +89,30 @@
             var Contenido = new Array(); CargaDropDownList();
             function Crear() {
 
+                    if (Contenido.length > 0) {
+                        var ClienteListId = $('#ClienteList').find('option:selected').attr('id');
+                        var ClienteList = $('#ClienteList').find('option:selected');
 
-                    var ClienteListId = $('#ClienteList').find('option:selected').attr('id');
-                    var ClienteList = $('#ClienteList').find('option:selected');
+                        var Id = $('#tbId').val();
+                        var fecha = $('#dpFecha').val();
 
-                    var Id = $('#tbId').val();
-                    var fecha = $('#dpFecha').val();
-
-                    var nueva = {
-                        CitaId: 0,
-                        ClienteId: ClienteListId,
-                        Nombres: ClienteList.text(),
-                        Fecha: fecha
+                        var nueva = {
+                            CitaId: 0,
+                            ClienteId: ClienteListId,
+                            Nombres: ClienteList.text(),
+                            Fecha: fecha
+                        }
+                        var EncabezadoDetalle = {
+                            Encabezado: nueva,
+                            Detalle: Contenido
+                        }
+                        Enviar(EncabezadoDetalle);
                     }
-                    var EncabezadoDetalle = {
-                        Encabezado: nueva,
-                        Detalle: Contenido
+                    else {
+                        alert("Primero debe agregar al menos un servicio!");
+
                     }
-                    Enviar(EncabezadoDetalle);
-            
+                }
             }
             function Enviar(data) {
                 $.ajax(
@@ -141,7 +146,9 @@
             }
             function AgregarDetalle() {
                 var Id = $('#tbId').val();
- 
+
+                if ($("#ServicioList option:selected").val() > 0) {
+
                     var ServicioId = $('#ServicioList').find('option:selected').attr('id');
                     var ClienteId = $('#ClienteList').find('option:selected').attr('id');
                     var Servicio = $('#ServicioList').find('option:selected');
@@ -156,7 +163,12 @@
                     }
                     Contenido.push(detail);
                     ActualizarTabla();
-                
+                }
+                else {
+
+                    alert("Por favor seleccione un servicio para agregarlo");
+
+                }
             }          
             function Buscar() {
 

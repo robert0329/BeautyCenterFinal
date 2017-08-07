@@ -6,7 +6,6 @@
 
 <h2>Citas</h2>
 
-
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -19,6 +18,7 @@
                 <span class="input-group-addon">CitaId:</span>
                 <input class="form-control input-group-lg col-2" type="text" id="tbId" placeholder="Id" />
                 <button type="button" class="btn btn-success col-sm-2" id="btnBuscar" onclick="Buscar()">Buscar</button>
+                
             </div>
         </div>
         <form id="form1">
@@ -52,6 +52,7 @@
                         <th>#</th>
                         <th>ServicioId</th>
                         <th>Servicio</th>
+                        <th>Precio</th>
                         <th>Opcion</th>
                     </tr>
                 </thead>
@@ -121,7 +122,6 @@
                         }
                     });
             };
-
             function ActualizarTabla() {
                 if ($('#tbBody tr').length > 0)
                     $('#tbBody tr').remove();
@@ -131,6 +131,7 @@
                     fila += '<td>' + (index + 1) + '</td>';
                     fila += '<td>' + detail.ServicioId + '</td>';
                     fila += '<td>' + detail.Servicio + '</td>';
+                    fila += '<td>' + detail.Precio + '</td>';
                     fila += '<td>' + '<input type="button" value="Delete" onclick="deleteRow(this)"/>' + '</td>';
                     fila += '</tr>';
                     $('#tabla').append(fila);
@@ -141,48 +142,63 @@
                 var ServicioId = $('#ServicioList').find('option:selected').attr('id');
                 var ClienteId = $('#ClienteList').find('option:selected').attr('id');
                 var Servicio = $('#ServicioList').find('option:selected');
+                var pre = $('#ServicioList').find('option:selected').attr('value');
                 var detail = {
                     Id: 0,
                     CitaId: Id,
                     ClienteId:ClienteId,
                     ServicioId: ServicioId,
-                    Servicio:Servicio.text()
+                    Servicio: Servicio.text(),
+                    Precio: pre
                 }
                 Contenido.push(detail);
                 ActualizarTabla();
-            }
-           
+            }          
             function Buscar() {
-                Contenido.length = 0;
-                var id = $('#tbId').val();
-                $.getJSON("/Citas/Buscar", { Id: id }, function (fac) {
-                    if (fac != null) {
-                        $('#dpFecha').val(fac.fecha);
-                        $('#ClienteList').find('option').remove();
-                        var option = "<option id='" + fac.clienteId + "'value='" + 1 + "'>" + fac.nombres + "</option>";
-                        $('#ClienteList').append(option);
 
-                        $.getJSON("/Citas/BuscarD", { Id: id }, function (customer) {
-                            $.each(customer, function (index, customer) {
+                var val = $("#tbId").val();
+                if (val.length > 0 && jQuery.isNumeric(val)) {
+                   
+                    Contenido.length = 0;
+                    var id = $('#tbId').val();
+                    $.getJSON("/Citas/Buscar", { Id: id }, function (fac) {
+                        if (fac != null) {
+                            $("#tbId").parent().addClass("has-success")
+                            $('#dpFecha').val(fac.fecha);
+                            $('#ClienteList').find('option').remove();
+                            var option = "<option id='" + fac.clienteId + "'value='" + 1 + "'>" + fac.nombres + "</option>";
+                            $('#ClienteList').append(option);
 
-                                var pp = {
-                                    Id: customer.id,
-                                    CitaId: id,
-                                    ServicioId: customer.servicioId,
-                                    Servicio: customer.servicio,
-                                    ClienteId: customer.clienteId
-                                }
-                                Contenido.push(pp);
-                                ActualizarTabla();
-                            });                           
-                            
-                        });
-                    }
-                    else if (fac == null) {
-                        alert("La cita que ha solicitado al parecer no esta disponible o ha sido eliminada");
+                            $.getJSON("/Citas/BuscarD", { Id: id }, function (customer) {
+                                $.each(customer, function (index, customer) {
 
-                    }
-                });
+                                    var pp = {
+                                        Id: customer.id,
+                                        CitaId: id,
+                                        ServicioId: customer.servicioId,
+                                        Servicio: customer.servicio,
+                                        ClienteId: customer.clienteId,
+                                        Precio: customer.precio
+                                    }
+                                    Contenido.push(pp);
+                                    ActualizarTabla();
+                                    
+                                });
+
+                            });
+                        }
+                        else if (fac == null) {
+                            alert("La cita que ha solicitado al parecer no esta disponible o ha sido eliminada");
+                            $("#tbId").parent().addClass("has-warning")
+
+                        }
+                    });
+                }
+                else {
+
+                    $("#tbId").parent().addClass("has-error")
+                    alert("Solo se acceptan numeros y verifique que el campo no este vacio!");
+                }
             }
             function ArmarCitas(motivo) {
                 var Id = $('#tbId').val();
@@ -288,6 +304,13 @@
             $(document).ready(function () {
                 NextId();
             });
+            function deleteRow(r) {
+                var i = r.parentNode.parentNode.rowIndex;
+                document.getElementById("tabla").deleteRow(i);
+                $('#ServicioList').val($('#ServicioList > option:first').val());
+                Contenido.splice(i - 1, 1);
+                ActualizarTabla();
+            }
         </script>
     }
 }

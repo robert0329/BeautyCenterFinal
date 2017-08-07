@@ -18,7 +18,7 @@ namespace BeautyCenterCore.BLL
                     conexion.FacturaDetalles.Add(detalle);
                     if (conexion.SaveChanges() > 0)
                     {
-                        
+
                         return true;
                     }
                 }
@@ -29,8 +29,7 @@ namespace BeautyCenterCore.BLL
                 }
             }
             return false;
-        }       
-        
+        }
         public static bool Modificar(FacturaDetalles detalle)
         {
             using (var conexion = new BeautyCoreDb())
@@ -108,7 +107,7 @@ namespace BeautyCenterCore.BLL
                 }
             }
             return false;
-        }      
+        }
         public static List<FacturaDetalles> GetLista()
         {
             var lista = new List<FacturaDetalles>();
@@ -170,28 +169,67 @@ namespace BeautyCenterCore.BLL
             }
             return resultado;
         }
-        public static bool Modificar(List<FacturaDetalles> detalles)
+        public static bool Modificar(List<FacturaDetalles> detalles, int facturaId)
         {
             bool resultado = false;
             using (var conexion = new BeautyCoreDb())
             {
                 try
                 {
-                    foreach (FacturaDetalles detail in detalles)
+                    //si no esta vacio
+                    List<FacturaDetalles> inFacturas = conexion.FacturaDetalles.Where(d => d.FacturaId == facturaId).ToList();
+                    List<FacturaDetalles> estaEnArreglo = new List<FacturaDetalles>();
+                    if (inFacturas.Count > 0)
                     {
-                        if (Buscar(detail.Id) != null)
+                        foreach (FacturaDetalles detail in detalles)
                         {
-                            conexion.Entry(detail).State = EntityState.Modified;
-                            if (conexion.SaveChanges() > 0)
-                                resultado = true;
-                        }
-                        else
-                        {
-                            conexion.FacturaDetalles.Add(detail);
-                            if (conexion.SaveChanges() > 0)
+
+                            foreach (var f in inFacturas)
                             {
-                                resultado = true;
+                                if (detail.Id == f.Id)
+                                {
+                                    estaEnArreglo.Add(f);
+                                }
                             }
+                        }
+                        foreach (var d in estaEnArreglo)
+                        {
+
+
+                            conexion.Entry(d).State = EntityState.Modified;
+                            conexion.SaveChanges();
+
+                        }
+
+                        foreach (var e in inFacturas)
+                        {
+                            bool found = false;
+
+                            foreach (var inf in detalles)
+                            {
+                                if (e.Id == inf.Id)
+                                {
+                                    found = true;
+                                    break;
+                                }
+
+                            }
+                            if (!found)
+                            {
+                                conexion.FacturaDetalles.Remove(e);
+                                conexion.SaveChanges();
+                            }
+                        }
+
+                        resultado = true;
+
+                    }
+                    else
+                    {
+                        foreach (var d in detalles)
+                        {
+                            conexion.FacturaDetalles.Add(d);
+                            conexion.SaveChanges();
                         }
                     }
                 }
@@ -222,7 +260,7 @@ namespace BeautyCenterCore.BLL
                     throw;
                 }
                 return resultado;
-            }          
+            }
         }
     }
 }

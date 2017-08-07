@@ -170,24 +170,76 @@ namespace BeautyCenterCore.BLL
             }
             return resultado;
         }
-        public static bool Modificar(List<CitasDetalles> detalles)
+        public static bool Modificar(List<CitasDetalles> detalles, int Id)
         {
             bool resultado = false;
-           
-            try
+            using (var conexion = new BeautyCoreDb())
             {
-                foreach (CitasDetalles detail in detalles)
+                try
                 {
-                    detalles = BLL.DetalleCitasBLL.Listar(detail.CitaId);
-                    resultado = Modificar(detail);
-                }
-            }
-            catch (Exception)
-            {
+                    //si no esta vacio
+                    List<CitasDetalles> inFacturas = conexion.CitasDetalles.Where(d => d.CitaId == Id).ToList();
+                    List<CitasDetalles> estaEnArreglo = new List<CitasDetalles>();
+                    if (inFacturas.Count > 0)
+                    {
+                        foreach (CitasDetalles detail in detalles)
+                        {
 
-                throw;
+                            foreach (var f in inFacturas)
+                            {
+                                if (detail.Id == f.Id)
+                                {
+                                    estaEnArreglo.Add(f);
+                                }
+                            }
+                        }
+                        foreach (var d in estaEnArreglo)
+                        {
+
+
+                            conexion.Entry(d).State = EntityState.Modified;
+                            conexion.SaveChanges();
+
+                        }
+                        foreach (var e in inFacturas)
+                        {
+                            bool found = false;
+
+                            foreach (var inf in detalles)
+                            {
+                                if (e.Id == inf.Id)
+                                {
+                                    found = true;
+                                    break;
+                                }
+
+                            }
+                            if (!found)
+                            {
+                                conexion.CitasDetalles.Remove(e);
+                                conexion.SaveChanges();
+                            }
+                        }
+
+                        resultado = true;
+
+                    }
+                    else
+                    {
+                        foreach (var d in detalles)
+                        {
+                            conexion.CitasDetalles.Add(d);
+                            conexion.SaveChanges();
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                return resultado;
             }
-            return resultado;
         }
         public static bool Eliminar(List<CitasDetalles> detalles)
         {

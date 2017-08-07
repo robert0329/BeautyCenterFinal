@@ -10,27 +10,6 @@ namespace BeautyCenterCore.BLL
 {
     public class CitasBLL
     {
-        public static int Identity()
-        {
-            int identity = 0;
-            string con =
-            @"Data Source=ROBERT\SERVIDORES;Initial Catalog=Db;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            using (SqlConnection conexion = new SqlConnection(con))
-            {
-                try
-                {
-                    conexion.Open();
-                    SqlCommand comando = new SqlCommand("SELECT IDENT_CURRENT('Citas')", conexion);
-                    identity = Convert.ToInt32(comando.ExecuteScalar());
-                    conexion.Close();
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-            return identity;
-        }
         public static bool Guardar(ClasesC nuevo)
         {
             bool resultado = false;
@@ -52,6 +31,7 @@ namespace BeautyCenterCore.BLL
             }
             return resultado;
         }
+
         public static Citas BuscarEncabezado(int? Id)
         {
             Citas nuevo = null;
@@ -69,6 +49,29 @@ namespace BeautyCenterCore.BLL
             }
             return nuevo;
         }
+
+        public static int Identity()
+        {
+            int identity = 0;
+            string con =
+            @"Server=tcp:personasserver.database.windows.net,1433;Initial Catalog=BaseDatos;Persist Security Info=False;User ID=dante0329;Password=Onepiece29;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            using (SqlConnection conexion = new SqlConnection(con))
+            {
+                try
+                {
+                    conexion.Open();
+                    SqlCommand comando = new SqlCommand("SELECT IDENT_CURRENT('Citas')", conexion);
+                    identity = Convert.ToInt32(comando.ExecuteScalar());
+                    conexion.Close();
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+            return identity;
+        }
+
         public static Citas Buscar(int nuevoId)
         {
             Citas ID = null;
@@ -86,6 +89,7 @@ namespace BeautyCenterCore.BLL
             }
             return ID;
         }
+
         public static ClasesC Buscarr(int? Id)
         {
             ClasesC nuevo = null;
@@ -124,7 +128,7 @@ namespace BeautyCenterCore.BLL
                     conexion.Entry(nuevo.Encabezado).State = EntityState.Modified;
                     if (conexion.SaveChanges() > 0)
                     {
-                        resultado = BLL.DetalleCitasBLL.Modificar(nuevo.Detalle);
+                        resultado = BLL.DetalleCitasBLL.Modificar(nuevo.Detalle,nuevo.Encabezado.CitaId);
                     }
                 }
                 catch (Exception)
@@ -236,6 +240,42 @@ namespace BeautyCenterCore.BLL
             }
             return false;
         }
+        public static List<CitasDetalles> Listar(int? Id)
+        {
+            List<CitasDetalles> listado = null;
+            using (var conexion = new BeautyCoreDb())
+            {
+                try
+                {
+                    listado = conexion.CitasDetalles.
+                        Where(d => d.ClienteId == Id).
+                        OrderBy(d => d.Servicio).ToList();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return listado;
+        }
+        public static List<CitasDetalles> ListarId(int Id)
+        {
+            List<CitasDetalles> list = new List<CitasDetalles>();
+            using (var db = new BeautyCoreDb())
+            {
+                try
+                {
+                    list = db.CitasDetalles.Where(p => p.ClienteId == Id).ToList();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return list;
+        }
         public static List<Citas> GetListaFecha(DateTime D, DateTime H)
         {
             List<Citas> lista = new List<Citas>();
@@ -251,11 +291,7 @@ namespace BeautyCenterCore.BLL
                     throw;
                 }
             }
-
-
-
             return lista;
-
         }
     }
 }

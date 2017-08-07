@@ -13,6 +13,7 @@ namespace BeautyCenterCore.Models
         ////////////////////////////////////////////////////////////////////////////////////
         public int ClienteId { get; set; }
         public string Nombres { get; set; }
+        
         public DateTime Fecha { get; set; }
     }
 }

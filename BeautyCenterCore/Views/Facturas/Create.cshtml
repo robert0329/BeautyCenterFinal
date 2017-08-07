@@ -157,7 +157,7 @@
                 var subTt = (parseInt(Cantidad) * parseFloat(Precio) - parseFloat(Descuento));
                 var detail = {
                     Id: 0,
-                    FacturaId: Id,
+                    FacturaId: Next,
                     ServicioId: ServicioId,
                     Servicios: Servicio.text(),
                     Precio: Precio,
@@ -166,7 +166,6 @@
                     SubTotal: subTt
                 }
                 Contenido.push(detail);
-                console.log(Contenido);
                 ActualizarTabla();
             }
             ///////////Validaciones//////////////////////////////////
@@ -201,22 +200,10 @@
                     return true;
                 }
             }
+
             ///////////Metodos Limpiar y cargar///////////////////////
             function CargaDropDownList() {
-                $.getJSON("/CargaFacturas/ListaServiciosFacturas",
-                    {
-                        id: 1
-                    },
-                    function (lista) {
-                        $.each(lista, function (index, lista) {
-                            var Id = lista.servicioId;
-                            var Precio = lista.precio;
-                            var Nombre = lista.nombre;
-                            var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
-                            $('#ServicioList').append(option);
-                        });
-                    });
-                $.getJSON("/CargaFacturas/ListaClientesFacturas",
+                $.getJSON("/Facturas/ListaClientesFacturas",
                     {
                         id: 1
                     },
@@ -226,10 +213,12 @@
                             var Nombre = lista.nombres;
                             var option = "<option id='" + Id + "'value='" + 0 + "'>" + Nombre + "</option>";
                             $('#ClienteList').append(option);
+
                         });
-                        
+
                     });
-                $.getJSON("/CargaFacturas/ListaEmpleadosFacturas",
+
+                $.getJSON("/Facturas/ListaEmpleadosFacturas",
                     {
                         id: 1
                     },
@@ -255,12 +244,27 @@
                 $('#tbCantidad').val("");
                 $('#tbDescuento').val("");
                 $('#tbBody tr').remove();
-
                 
                 cont = 0;
                 $('#tbTotal').val(0);
                 $('#tbDescuento').val(0);
             }
+            $("#ClienteList").change(function () {
+                var Id = $('#ClienteList').find('option:selected').attr('id');
+                $.getJSON("/Facturas/ListaServiciosFacturas",
+                    {
+                        id: Id
+                    },
+                    function (lista) {
+                        $.each(lista, function (index, lista) {
+                            var Id = lista.servicioId;
+                            var Precio = lista.precio;
+                            var Nombre = lista.servicio;
+                            var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
+                            $('#ServicioList').append(option);
+                        });
+                    });
+            })
             Date.prototype.yyyymmdd = function () { var yyyy = this.getFullYear().toString(); var mm = (this.getMonth() + 1).toString(); var dd = this.getDate().toString(); return yyyy + "/" + (mm[1] ? mm : "0" + mm[0]) + "/" + (dd[1] ? dd : "0" + dd[0]); }; var date = new Date(); $('#dpFecha').val(date.yyyymmdd());
             $("#ServicioList").change(function () {
                 var Precio = $('#ServicioList').find('option:selected').attr('value');
@@ -270,16 +274,20 @@
                 var i = r.parentNode.parentNode.rowIndex;
                 document.getElementById("tabla").deleteRow(i);
                 $('#ServicioList').val($('#ServicioList > option:first').val());
-                Contenido.splice(i-1, 1);
+                Contenido.splice(i - 1, 1);
+                ActualizarTabla();
             }
             $(document).ready(function () {
                 NextId();
             });
+            var Next = 0;
             function NextId() {
                 $.getJSON("/Facturas/LastIndex", function (id) {
                     $('#tbId').val(id);
+                    Next = id;
                 });
             }
+
             //////////Guardar Factura/////////////////////////////////
             function ValidarFactura() {
                 var valid = true;
@@ -322,7 +330,7 @@
                 $.ajax(
                     {
                         method: "POST",
-                        url: "/CargaFacturas/GuardarFacturas",
+                        url: "/Facturas/GuardarFacturas",
                         data: data,
                         success: function (id) {
                             if (parseInt(id) > 0) {
@@ -331,19 +339,34 @@
                         }
                     });
             };
-            ///////////Metodos/////////////////////////////////////////
+            
             function Buscar() {
-                Contenido.length = 0;var id = $('#tbId').val();
-                $.getJSON("/CargaFacturas/Buscar",{ FacturaId: id }, function (fac) {
-                        if (fac != null) {
+                Contenido.length = 0; var id = $('#tbId').val();
+                var pp;
+                $.getJSON("/Facturas/Buscar",{ Id: id }, function (fac) {
+                    if (fac != null) {
                             $('#dpFecha').val(fac.fecha);
                             $('#ClienteList').find('option').remove();
                             $('#EmpleadoList').find('option').remove();
                             var option = "<option id='" + fac.clienteId + "'value='" + 1 + "'>" + fac.clientes + "</option>";
+                            pp = fac.clienteId;
                             $('#ClienteList').append(option);
                             var optionE = "<option id='" + 1 + "'value='" + 1 + "'>" + fac.empleados + "</option>";
-                            $('#EmpleadoList').append(optionE);                      
-
+                            $('#EmpleadoList').append(optionE);         
+                        
+                            $.getJSON("/Facturas/ListaServiciosFacturas",
+                                {
+                                    id: pp
+                                },
+                                function (lista) {
+                                    $.each(lista, function (index, lista) {
+                                        var Id = lista.servicioId;
+                                        var Precio = lista.precio;
+                                        var Nombre = lista.servicio;
+                                        var option = "<option id='" + Id + "'value='" + Precio + "'>" + Nombre + "</option>";
+                                        $('#ServicioList').append(option);
+                                    });
+                                });
                             $.getJSON("/FacturaDetalles/BuscarF", { FacturaId: id }, function (customer) {
                                 $.each(customer, function (index, customer) {
 
@@ -399,7 +422,6 @@
                 }
             }
             function ModificarFactura(EncabezadoDetalle) {
-                console.log(EncabezadoDetalle);
                 $.ajax({
                     method: "POST",
                     url: "/Facturas/Modificar",

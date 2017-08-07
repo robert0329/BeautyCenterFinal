@@ -1,11 +1,7 @@
 create table Citas (
 CitaId int identity(1, 1)not null primary key,
-ClienteId  int,
-Nombres   varchar(100),
-ServicioId int,
-Servicio  varchar(100) ,
-EmpleadoId int,
-NombreE varchar(100),
+ClienteId int not null foreign key references Clientes,
+Nombres varchar(100),
 Fecha datetime
 );
 
@@ -34,17 +30,18 @@ SueldoFijo float
 
 create table CitasDetalles(
 Id  int identity(1,1)not null primary key,
-CitaId int,
-ClienteId int ,
-ServicioId int,
-EmpleadoId int 
+CitaId int not null foreign key references Citas,
+ClienteId int not null foreign key references Clientes,
+Precio int,
+ServicioId int not null foreign key references Servicios,
+Servicio varchar(100)
 );
 
 create table FacturaDetalles(
 Id int identity(1,1)not null primary key,
-FacturaId int ,
-ClienteId int,
-ServicioId int, 
+FacturaId int not null foreign key references Facturas,
+ServicioId int not null foreign key references Servicio, 
+Servicios varchar(300),
 Precio    float,
 Descuento float,
 Cantidad  int,
@@ -53,9 +50,11 @@ SubTotal  float
 
 create table Facturas (
 FacturaId int identity(1,1)not null primary key,
-Cliente varchar(200),
+ClienteId int not null foreign key references Clientes,
+Clientes varchar(300),
 Fecha datetime ,
 Total float,
+Empleados varchar(300)
 );
 
 create table Servicios(

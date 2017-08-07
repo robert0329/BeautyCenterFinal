@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeautyCenterCore.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BeautyCenterCore.Controllers
 {
+    [Authorize(ActiveAuthenticationSchemes = "CookiePolicy")]
     public class FacturasController : Controller
     {
         private readonly BeautyCoreDb _context;
@@ -16,6 +18,72 @@ namespace BeautyCenterCore.Controllers
         public FacturasController(BeautyCoreDb context)
         {
             _context = context;    
+        }
+        [HttpGet]
+        public JsonResult Buscar(int facturaId)
+        {
+            Facturas factura = BLL.FacturasBLL.Buscar(facturaId);
+            return Json(factura);
+        }
+        [HttpGet]
+        public JsonResult BuscarF(int facturaId)
+        {
+            var factura = BLL.FacturasBLL.Listar();
+            return Json(factura);
+        }
+        [HttpGet]
+        public JsonResult BuscarClientes(int? clienteId)
+        {
+            var cliente = BLL.ClientesBLL.Buscar(clienteId);
+            return Json(cliente);
+        }
+        [HttpGet]
+        public JsonResult ServiciosFacturas(int id)
+        {
+            var listado = BLL.ServiciosBLL.ListarId(id);
+
+            return Json(listado);
+        }
+        [HttpGet]
+        public JsonResult ListaServiciosFacturas(int id)
+        {
+            var listado = BLL.CitasBLL.Listar(id);
+
+            return Json(listado);
+        }
+        [HttpGet]
+        public JsonResult ListaClientesFacturas(int id)
+        {
+            var listado = BLL.ClientesBLL.Listar();
+
+            return Json(listado);
+        }
+        [HttpGet]
+        public JsonResult ListaEmpleadosFacturas(int id)
+        {
+            var listado = BLL.EmpleadosBLL.Listar();
+
+            return Json(listado);
+        }
+        [HttpPost]
+        public JsonResult GuardarFacturas(Clases nueva)
+        {
+            bool resultado = false;
+            if (ModelState.IsValid)
+            {
+                DateTime now = DateTime.Now;
+                int y, m, d, h, min, s;
+                y = nueva.Encabezado.Fecha.Year;
+                m = nueva.Encabezado.Fecha.Month;
+                d = nueva.Encabezado.Fecha.Day;
+                h = now.Hour;
+                min = now.Minute;
+                s = now.Second;
+                nueva.Encabezado.Fecha = new DateTime(y, m, d, h, min, s);
+
+                resultado = BLL.FacturasBLL.Guardar(nueva);
+            }
+            return Json(resultado);
         }
         [HttpPost]
         public JsonResult Modificar(Clases factura)
@@ -53,13 +121,6 @@ namespace BeautyCenterCore.Controllers
             {
                 return Json(null);
             }
-        }
-        [HttpGet]
-        public ActionResult Buscar(int Id)
-        {
-           Facturas var = BLL.FacturasBLL.Buscar(Id);
-
-            return Json(var);
         }
         // GET: Facturas
         public IActionResult Index()

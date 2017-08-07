@@ -31,6 +31,7 @@ namespace BeautyCenterCore.BLL
             }
             return identity;
         }
+
         public static bool Guardar(Clases factura)
         {
             bool resultado = false;
@@ -52,6 +53,7 @@ namespace BeautyCenterCore.BLL
             }
             return resultado;
         }
+
         public static Facturas BuscarEncabezado(int? facturaId)
         {
             Facturas factura = null;
@@ -69,6 +71,7 @@ namespace BeautyCenterCore.BLL
             }
             return factura;
         }
+
         public static Facturas Buscar(int nuevoId)
         {
             Facturas ID = null;
@@ -85,7 +88,8 @@ namespace BeautyCenterCore.BLL
                 }
             }
             return ID;
-        }       
+        }      
+        
         public static Clases Buscarr(int? facturaId)
         {
             Clases factura = null;
@@ -114,6 +118,7 @@ namespace BeautyCenterCore.BLL
             }
             return factura;
         }
+
         public static bool Modificar(Clases factura)
         {
             bool resultado = false;
@@ -125,7 +130,7 @@ namespace BeautyCenterCore.BLL
 
                     if (conexion.SaveChanges() > 0)
                     {
-                        resultado = BLL.FacturaDetallesBLL.Modificar(factura.Detalle);
+                        resultado = BLL.FacturaDetallesBLL.Modificar(factura.Detalle, factura.Encabezado.FacturaId);
                     }
                 }
                 catch (Exception)

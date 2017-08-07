@@ -154,35 +154,93 @@
                 ActualizarTabla();
             }          
             function Buscar() {
-                Contenido.length = 0;
-                var id = $('#tbId').val();
-                $.getJSON("/Citas/Buscar", { Id: id }, function (fac) {
-                    if (fac != null) {
-                        $('#dpFecha').val(fac.fecha);
-                        $('#ClienteList').find('option').remove();
-                        var option = "<option id='" + fac.clienteId + "'value='" + 1 + "'>" + fac.nombres + "</option>";
-                        $('#ClienteList').append(option);
 
-                        $.getJSON("/Citas/BuscarD", { Id: id }, function (customer) {
-                            $.each(customer, function (index, customer) {
+                var val = $("#tbId").val();
+                if (val.length > 0 && jQuery.isNumeric(val)) {
 
-                                var pp = {
-                                    Id: customer.id,
-                                    CitaId: id,
-                                    ServicioId: customer.servicioId,
-                                    Servicio: customer.servicio,
-                                    ClienteId: customer.clienteId,
-                                    Precio: customer.precio
-                                }
-                                Contenido.push(pp);
-                                ActualizarTabla();
-                            });                           
+                    Contenido.length = 0;
+                    var id = $('#tbId').val();
+                    $.getJSON("/Citas/Buscar", { Id: id }, function (fac) {
+                        if (fac != null) {
                             
-                        });
-                    }
-                    else if (fac == null) {
-                        alert("La cita que ha solicitado al parecer no esta disponible o ha sido eliminada");
+                            $("#tbId").parent().addClass("has-success");
+                            $('#dpFecha').val(fac.fecha);
+                            $('#ClienteList').find('option').remove();
+                            var option = "<option id='" + fac.clienteId + "'value='" + 1 + "'>" + fac.nombres + "</option>";
+                            $('#ClienteList').append(option);
 
+                            $.getJSON("/Citas/BuscarD", { Id: id }, function (customer) {
+                                $.each(customer, function (index, customer) {
+
+                                    var pp = {
+                                        Id: customer.id,
+                                        CitaId: id,
+                                        ServicioId: customer.servicioId,
+                                        Servicio: customer.servicio,
+                                        ClienteId: customer.clienteId,
+                                        Precio: customer.precio
+                                    }
+                                    Contenido.push(pp);
+                                    ActualizarTabla();
+
+                                });
+
+                            });
+                        }
+                        else if (fac == null) {
+                            alert("La cita que ha solicitado al parecer no esta disponible o ha sido eliminada");
+                            $("#tbId").parent().addClass("has-warning");
+
+                        }
+                    });
+                }
+                else {
+
+                    $("#tbId").parent().addClass("has-error");
+                    alert("Solo se acceptan numeros y verifique que el campo no este vacio!");
+                }
+            }
+            function ArmarCitas(motivo) {
+                var Id = $('#tbId').val();
+                var ClienteListId = $('#ClienteList').find('option:selected').attr('id');
+                var ClienteList = $('#ClienteList').find('option:selected');
+
+                var fecha = $('#dpFecha').val();
+
+                var nueva = {
+                    CitaId: Id,
+                    ClienteId: ClienteListId,
+                    Nombres: ClienteList.text(),
+                    Fecha: fecha
+                }
+                var EncabezadoDetalle = {
+                    Encabezado: nueva,
+                    Detalle: Contenido
+                }
+
+                if (motivo == 1) {
+                    ModificarFactura(EncabezadoDetalle);
+                }
+                else if (motivo == 2) {
+
+                    EliminarFactura(EncabezadoDetalle);
+                }
+            }
+            function ModificarFactura(EncabezadoDetalle) {
+                $.ajax({
+                    method: "POST",
+                    url: "/Citas/Modificar",
+                    data: EncabezadoDetalle,
+                    success: function (res) {
+                        if (res != null) {
+                            Contenido.length = 0;
+                            alert("La Cita ha sido modificada.");
+                            LimpiarCampos(0);
+                        } else {
+                            alert("No se a podido procesar su solicitud.");
+                        }
+                    },
+                    error: function (error) {
                     }
                 });
             }

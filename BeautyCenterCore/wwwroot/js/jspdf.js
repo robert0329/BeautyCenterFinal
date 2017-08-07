@@ -158,13 +158,13 @@ var jsPDF = (function(global) {
 
 		// Default options
 		unit        = unit || 'mm';
-		format      = format || 'c10';
+		format      = format || 'a1';
 		orientation = ('' + (orientation || 'P')).toLowerCase();
 
 		var format_as_string = ('' + format).toLowerCase(),
 			compress = !!compressPdf && typeof Uint8Array === 'function',
 			textColor            = options.textColor  || '5 g',
-			drawColor            = options.drawColor  || '0 G',
+			drawColor            = options.drawColor  || '5 G',
 			activeFontSize       = options.fontSize   || 12,
 			lineHeightProportion = options.lineHeight || 1.15,
 			lineWidth            = options.lineWidth  || 0.200025, // 2mm

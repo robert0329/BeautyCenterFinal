@@ -333,9 +333,7 @@
                         url: "/Facturas/GuardarFacturas",
                         data: data,
                         success: function (id) {
-                            if (parseInt(id) > 0) {
-                                factId = id;
-                            }
+                                updateTips("Factura Realizada con exito!");                
                         }
                     });
             };

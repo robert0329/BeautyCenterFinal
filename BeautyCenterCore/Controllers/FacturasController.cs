@@ -20,9 +20,9 @@ namespace BeautyCenterCore.Controllers
             _context = context;    
         }
         [HttpGet]
-        public JsonResult Buscar(int facturaId)
+        public JsonResult Buscar(int Id)
         {
-            Facturas factura = BLL.FacturasBLL.Buscar(facturaId);
+            Facturas factura = BLL.FacturasBLL.Buscar(Id);
             return Json(factura);
         }
         [HttpGet]
